@@ -19,6 +19,12 @@ const 강의정보 = {
 
   자료: [
     {
+      이름: "강의교안 다운로드",
+      링크: "https://drive.google.com/drive/folders/1YXTFbVQOPYcoSELMeTxzBbdyid3oc98N?usp=drive_link",
+      설명: "강의교안 파일을 내려받을 수 있는 구글 드라이브 폴더입니다.",
+      버튼: "다운로드"
+    },
+    {
       이름: "공유보드 바로가기",
       링크: "https://padlet.com/HAEMALGEUM/2026-ai-0708-7rivppo987g5tsyr",
       설명: "실습 결과물을 공유하는 패들렛 보드입니다.",
