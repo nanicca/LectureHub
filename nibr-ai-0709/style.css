@@ -1,0 +1,273 @@
+/* =========================================================================
+ *  style.css  —  디자인. 색상만 바꾸려면 아래 :root 변수를 수정하세요.
+ * ========================================================================= */
+
+:root {
+  --main: #0f9d6f;        /* 메인 색상 — 세련된 프레시 그린 */
+  --main-dark: #047857;
+  --point: #34d3a6;       /* 포인트 색상 — 민트 */
+  --tint: #e6f6ef;        /* 옅은 그린 배경 (태그·호버 등) */
+  --tint-strong: #edf7f2;
+  --bg: #f4faf7;
+  --card: #ffffff;
+  --text: #16231d;
+  --text-sub: #5f7269;
+  --border: #e0ede7;
+  --radius: 16px;
+  --shadow: 0 6px 24px rgba(16, 40, 32, 0.06);
+  --shadow-hover: 0 12px 32px rgba(5, 150, 105, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Pretendard", -apple-system, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- 헤더 / Hero ---------- */
+.hero {
+  background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
+  color: #fff;
+  padding: 64px 0 72px;
+  text-align: center;
+}
+.hero .brand {
+  display: inline-flex; align-items: center;
+  background: #fff; border-radius: 14px;
+  padding: 12px 22px; margin-bottom: 26px;
+  box-shadow: 0 8px 24px rgba(4, 60, 40, 0.18);
+}
+.hero .brand img { height: 46px; width: auto; display: block; }
+.hero .date {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+.hero h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
+.hero .subtitle { margin-top: 12px; font-size: 17px; opacity: 0.92; }
+.hero .intro {
+  max-width: 680px; margin: 20px auto 0;
+  font-size: 15px; opacity: 0.88;
+}
+
+/* ---------- 강사 소개 ---------- */
+.instructor {
+  margin-top: -36px; margin-bottom: 48px;
+}
+.instructor .box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 28px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+}
+.instructor .name { font-size: 18px; font-weight: 700; }
+.instructor .name span { color: var(--text-sub); font-weight: 500; font-size: 14px; }
+.instructor .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.instructor .tag {
+  background: var(--tint); color: var(--main-dark);
+  font-size: 13px; padding: 5px 12px; border-radius: 999px;
+}
+.instructor .blog {
+  color: var(--main); font-weight: 600; font-size: 14px;
+}
+
+/* ---------- 섹션 공통 ---------- */
+.section { margin-bottom: 56px; }
+.section-title {
+  font-size: 22px; font-weight: 800; margin-bottom: 6px;
+}
+.section-sub { color: var(--text-sub); font-size: 14px; margin-bottom: 22px; }
+
+/* ---------- 차시 카드 그리드 ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 22px 20px;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  display: flex; flex-direction: column;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+.card .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--main), var(--point));
+  color: #fff; font-weight: 800; font-size: 16px; margin-bottom: 14px;
+}
+.card h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.card p { color: var(--text-sub); font-size: 14px; margin-top: 8px; flex: 1; }
+.card .go {
+  margin-top: 16px; font-weight: 700; font-size: 14px; color: var(--main);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.card:hover .go { color: var(--main-dark); }
+
+/* ---------- 자료 다운로드 ---------- */
+.files { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.file {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 22px;
+  box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px;
+  transition: box-shadow 0.18s ease;
+}
+.file:hover { box-shadow: var(--shadow-hover); }
+.file .ico { font-size: 26px; }
+.file .name { font-weight: 700; }
+.file .desc { color: var(--text-sub); font-size: 13px; }
+.file .btn { margin-left: auto; }
+
+/* ---------- 버튼 ---------- */
+.btn {
+  display: inline-block; background: var(--main); color: #fff;
+  padding: 9px 18px; border-radius: 10px; font-weight: 600; font-size: 14px;
+  border: none; cursor: pointer; transition: background 0.15s ease;
+}
+.btn:hover { background: var(--main-dark); }
+.btn.ghost { background: transparent; color: var(--main); border: 1px solid var(--main); }
+.btn.ghost:hover { background: var(--tint); }
+
+/* ---------- 푸터 ---------- */
+footer {
+  border-top: 1px solid var(--border); margin-top: 40px;
+  padding: 28px 0; text-align: center; color: var(--text-sub); font-size: 13px;
+}
+
+/* =========================================================================
+ *  세션(강의안) 페이지
+ * ========================================================================= */
+.topnav {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.topnav .inner {
+  max-width: 1080px; margin: 0 auto; padding: 12px 20px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.topnav .brand img {
+  height: 26px; width: auto; display: block; margin-right: 4px;
+}
+.topnav a {
+  font-size: 13px; padding: 6px 12px; border-radius: 8px;
+  color: var(--text-sub); font-weight: 600;
+}
+.topnav a:hover { background: var(--tint); color: var(--main-dark); }
+.topnav a.home { color: var(--main); }
+.topnav a.active { background: var(--main); color: #fff; }
+
+.s-hero {
+  background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
+  color: #fff; padding: 44px 0 48px;
+}
+.s-hero .eyebrow { font-size: 14px; opacity: 0.85; }
+.s-hero h1 { font-size: 30px; font-weight: 800; margin-top: 6px; letter-spacing: -0.5px; }
+.s-hero .meta { margin-top: 10px; font-size: 14px; opacity: 0.85; }
+
+/* 빠른 이동 바 */
+.quicknav {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 26px 0 36px;
+}
+.quicknav a {
+  background: var(--tint); color: var(--main-dark);
+  font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px;
+}
+.quicknav a:hover { background: var(--main); color: #fff; }
+
+/* 학습목표 */
+.goals {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--main);
+  border-radius: 12px; padding: 18px 22px; margin-bottom: 34px;
+}
+.goals h4 { font-size: 14px; color: var(--main); margin-bottom: 8px; }
+.goals li { margin-left: 18px; }
+
+/* 본문 블록 */
+.block { margin-bottom: 38px; scroll-margin-top: 70px; }
+.block h2 { font-size: 21px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.3px; }
+.block p { color: var(--text); }
+
+/* 표 */
+table { width: 100%; border-collapse: collapse; background: var(--card);
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+th, td { padding: 12px 16px; text-align: left; font-size: 14px;
+  border-bottom: 1px solid var(--border); }
+th { background: var(--tint-strong); font-weight: 700; }
+tr:last-child td { border-bottom: none; }
+
+/* 실습 / 프롬프트 카드 */
+.prompt {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px; margin-top: 14px;
+}
+.prompt .label {
+  display: inline-block; background: var(--point); color: #fff;
+  font-size: 12px; font-weight: 700; padding: 3px 10px;
+  border-radius: 999px; margin-bottom: 10px;
+}
+.prompt pre {
+  white-space: pre-wrap; word-break: break-word;
+  font-family: "SFMono-Regular", Consolas, "D2Coding", monospace;
+  font-size: 13.5px; line-height: 1.6; color: #2a2f45;
+  background: #f7f8fb; border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; margin-bottom: 12px;
+}
+.copy-btn {
+  background: var(--main); color: #fff; border: none; cursor: pointer;
+  font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px;
+  transition: background 0.15s ease;
+}
+.copy-btn:hover { background: var(--main-dark); }
+.copy-btn.done { background: #16a34a; }
+
+/* 체크리스트 */
+.checklist { list-style: none; }
+.checklist li {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px; font-size: 14.5px;
+}
+.checklist li::before {
+  content: "✓"; color: var(--point); font-weight: 800;
+}
+
+/* 이전/다음 */
+.pager { display: flex; justify-content: space-between; gap: 12px;
+  margin: 44px 0 10px; }
+.pager a { flex: 1; }
+.pager .btn { width: 100%; text-align: center; }
+.pager .spacer { flex: 1; }
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 860px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .hero h1 { font-size: 28px; }
+  .s-hero h1 { font-size: 23px; }
+  .cards, .files { grid-template-columns: 1fr; }
+  .instructor .tags { margin-left: 0; }
+  .file .btn { margin-left: 0; }
+  .file { flex-wrap: wrap; }
+}

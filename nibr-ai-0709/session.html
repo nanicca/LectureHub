@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>강의안</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 상단 네비 (전체 차시 바로가기) -->
+  <nav class="topnav">
+    <div class="inner">
+      <span class="brand"><img src="logo.jpg" alt="국립생물자원관" /></span>
+      <span id="상단네비" style="display:contents"></span>
+    </div>
+  </nav>
+
+  <!-- 세션 히어로 -->
+  <header class="s-hero" id="세션히어로"></header>
+
+  <!-- 본문 -->
+  <main class="wrap">
+    <div id="세션본문" style="margin-top: 28px;"></div>
+  </main>
+
+  <footer>
+    <div class="wrap">© 2026 전혜영 · 국립생물자원관 AI 스마트 문서 실무</div>
+  </footer>
+
+  <script>
+    // data.js·app.js를 항상 최신으로 불러옵니다 (캐시 방지)
+    (function () {
+      var v = Date.now();
+      function load(src, cb) {
+        var s = document.createElement("script");
+        s.src = src + "?v=" + v;
+        s.onload = cb;
+        document.head.appendChild(s);
+      }
+      load("data.js", function () { load("app.js", function () { renderSession(); }); });
+    })();
+  </script>
+</body>
+</html>
