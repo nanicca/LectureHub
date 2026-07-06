@@ -55,7 +55,7 @@ function renderIndex() {
             <div class="name">${esc(f.이름)}</div>
             <div class="desc">${esc(f.설명 || "")}</div>
           </div>
-          <a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>
+          <a class="btn" href="${esc(f.링크)}"${f.다운로드 ? ` download` : ` target="_blank" rel="noopener"`}>${esc(f.버튼 || "다운로드")}</a>
         </div>`
       )
       .join("");
