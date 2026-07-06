@@ -162,6 +162,15 @@ footer {
 .topnav a:hover { background: #eef0ff; color: var(--main-dark); }
 .topnav a.home { color: var(--main); }
 .topnav a.active { background: var(--main); color: #fff; }
+.topnav .navlinks {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.topnav .nav-logo {
+  margin-left: auto; height: 26px; width: auto; flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .topnav .nav-logo { height: 20px; }
+}
 
 .s-hero {
   background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
