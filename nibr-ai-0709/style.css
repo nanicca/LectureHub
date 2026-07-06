@@ -167,6 +167,10 @@ footer {
 .topnav .brand img {
   height: 26px; width: auto; display: block; margin-right: 4px;
 }
+.topnav .brand-right {
+  margin-left: auto; display: inline-flex; align-items: center;
+}
+.topnav .brand-right img { height: 22px; width: auto; display: block; }
 .topnav a {
   font-size: 13px; padding: 6px 12px; border-radius: 8px;
   color: var(--text-sub); font-weight: 600;
