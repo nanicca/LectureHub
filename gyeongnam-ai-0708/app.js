@@ -69,7 +69,7 @@ function renderSession() {
   const idx = d.차시.findIndex((c) => c.번호 === n);
   const c = d.차시[idx];
 
-  document.title = `${n}차시 · ${c ? c.제목 : ""} · ${d.강의명}`;
+  document.title = `Part${n} · ${c ? c.제목 : ""} · ${d.강의명}`;
 
   if (!c) {
     document.getElementById("세션본문").innerHTML =
@@ -81,7 +81,7 @@ function renderSession() {
   const nav = d.차시
     .map(
       (x) =>
-        `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}">${x.번호}차시</a>`
+        `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}">Part${x.번호}</a>`
     )
     .join("");
   document.getElementById("상단네비").innerHTML =
@@ -90,7 +90,7 @@ function renderSession() {
   // 히어로
   document.getElementById("세션히어로").innerHTML = `
     <div class="wrap">
-      <div class="eyebrow">${n}차시 · ${esc(d.강의명)}</div>
+      <div class="eyebrow">Part${n} · ${esc(d.강의명)}</div>
       <h1>${esc(c.제목)}</h1>
       <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(d.강의일자)}</div>
     </div>`;
@@ -145,8 +145,8 @@ function renderSession() {
   const prev = d.차시[idx - 1];
   const next = d.차시[idx + 1];
   html += `<div class="pager">
-    ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${prev.번호}차시</button></a>` : `<span class="spacer"></span>`}
-    ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${next.번호}차시 →</button></a>` : `<span class="spacer"></span>`}
+    ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← Part${prev.번호}</button></a>` : `<span class="spacer"></span>`}
+    ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">Part${next.번호} →</button></a>` : `<span class="spacer"></span>`}
   </div>`;
 
   document.getElementById("세션본문").innerHTML = html;

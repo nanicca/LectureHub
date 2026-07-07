@@ -5,7 +5,7 @@
 :root {
   --main: #4f46e5;        /* 메인 색상 */
   --main-dark: #3730a3;
-  --point: #06b6d4;       /* 포인트 색상 */
+  --point: #8b5cf6;       /* 포인트 색상 — 메인 남보라와 어울리는 바이올렛 */
   --bg: #f7f8fb;
   --card: #ffffff;
   --text: #1f2433;
