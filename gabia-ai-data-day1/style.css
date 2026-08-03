@@ -125,7 +125,13 @@ a { color: inherit; text-decoration: none; }
 .file .ico { font-size: 26px; }
 .file .name { font-weight: 700; }
 .file .desc { color: var(--text-sub); font-size: 13px; }
-.file .btn { margin-left: auto; }
+.file > div { min-width: 0; }                 /* 텍스트가 대신 줄바꿈되도록 */
+.file .btn {
+  margin-left: auto;
+  flex-shrink: 0;                             /* 버튼이 눌려 좁아지지 않게 */
+  white-space: nowrap;                        /* 버튼 글자는 한 줄 유지 */
+  word-break: keep-all;
+}
 
 /* ---------- 버튼 ---------- */
 .btn {
