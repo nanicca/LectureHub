@@ -83,6 +83,36 @@ a { color: inherit; text-decoration: none; }
 }
 .section-sub { color: var(--text-sub); font-size: 14px; margin-bottom: 22px; }
 
+/* ---------- 일차(Day) 그룹 ---------- */
+.day-group { margin-bottom: 34px; }
+.day-group:last-child { margin-bottom: 0; }
+.day-head {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+.day-badge {
+  background: linear-gradient(135deg, var(--main), var(--main-dark));
+  color: #fff; font-weight: 800; font-size: 15px;
+  padding: 6px 16px; border-radius: 999px;
+}
+.day-date {
+  color: var(--main); font-weight: 700; font-size: 14px;
+  background: #eef0ff; padding: 4px 12px; border-radius: 999px;
+}
+.day-desc { color: var(--text-sub); font-size: 14px; }
+.day-todo {
+  background: var(--card); border: 1px dashed var(--border);
+  border-radius: var(--radius); padding: 26px 22px;
+  color: var(--text-sub); font-size: 15px; text-align: center;
+}
+/* 세션 상단 네비의 일차 태그 */
+.day-tag {
+  background: #eef0ff; color: var(--main-dark);
+  font-weight: 700; font-size: 13px;
+  padding: 5px 12px; border-radius: 999px; margin-right: 4px;
+}
+
 /* ---------- 차시 카드 그리드 ---------- */
 .cards {
   display: grid;

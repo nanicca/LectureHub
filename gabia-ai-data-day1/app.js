@@ -6,6 +6,18 @@
 const esc = (s = "") =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/* ---------- 일차(Day) 그룹 도우미 ----------
+ *  · 각 차시에 일차:2 를 넣으면 2일차 그룹으로 갑니다. (없으면 1일차)
+ *  · 일차목록(data.js)으로 각 일차의 라벨·날짜·소개·준비중을 지정합니다.
+ */
+function 일차of(c) { return c.일차 || 1; }
+function 일차목록of(d) {
+  if (d.일차목록 && d.일차목록.length) return d.일차목록;
+  const days = [...new Set(d.차시.map(일차of))].sort((a, b) => a - b);
+  return days.map((n) => ({ 일차: n, 라벨: `${n}일차` }));
+}
+function 차시목록of(d, day) { return d.차시.filter((c) => 일차of(c) === day); }
+
 /* ---------- 메인 페이지 렌더 ---------- */
 function renderIndex() {
   const d = 강의정보;
@@ -39,17 +51,34 @@ function renderIndex() {
     <div class="tags">${tags}</div>
     ${blog}`;
 
-  // 차시 카드
-  document.getElementById("차시목록").innerHTML = d.차시
-    .map(
-      (c) => `
-      <a class="card" href="session.html?n=${c.번호}">
-        <span class="num">${c.번호}</span>
-        <h3>${esc(c.제목)}</h3>
-        <p>${esc(c.한줄설명 || "")}</p>
-        <span class="go">강의안 보기 →</span>
-      </a>`
-    )
+  // 차시 카드 — 일차(Day)별로 그룹
+  document.getElementById("차시목록").innerHTML = 일차목록of(d)
+    .map((day) => {
+      const list = 차시목록of(d, day.일차);
+      const cards = list
+        .map(
+          (c, i) => `
+          <a class="card" href="session.html?n=${c.번호}">
+            <span class="num">${i + 1}</span>
+            <h3>${esc(c.제목)}</h3>
+            <p>${esc(c.한줄설명 || "")}</p>
+            <span class="go">강의안 보기 →</span>
+          </a>`
+        )
+        .join("");
+      const body = list.length
+        ? `<div class="cards">${cards}</div>`
+        : `<div class="day-todo">📅 ${esc(day.날짜 || "")} 공개 예정입니다</div>`;
+      return `
+        <div class="day-group">
+          <div class="day-head">
+            <span class="day-badge">${esc(day.라벨)}</span>
+            ${day.날짜 ? `<span class="day-date">${esc(day.날짜)}</span>` : ""}
+            ${day.소개 ? `<span class="day-desc">${esc(day.소개)}</span>` : ""}
+          </div>
+          ${body}
+        </div>`;
+    })
     .join("");
 
   // 자료
@@ -88,33 +117,44 @@ function renderIndex() {
 function renderSession() {
   const d = 강의정보;
   const n = parseInt(new URLSearchParams(location.search).get("n"), 10) || 1;
-  const idx = d.차시.findIndex((c) => c.번호 === n);
-  const c = d.차시[idx];
+  const c = d.차시.find((x) => x.번호 === n);
 
-  document.title = `${n}차시 · ${c ? c.제목 : ""} · ${d.강의명}`;
   setFooter(d);
   setCornerLogo(d);
 
   if (!c) {
+    document.title = `강의안 · ${d.강의명}`;
     document.getElementById("세션본문").innerHTML =
       '<p>해당 차시를 찾을 수 없습니다. <a href="index.html">목록으로</a></p>';
     return;
   }
 
-  // 상단 네비 (전체 차시)
-  const nav = d.차시
+  // 이 차시가 속한 일차(Day) 정보 + 일차 안에서의 순번
+  const day = 일차of(c);
+  const dayList = 차시목록of(d, day);
+  const dpos = dayList.findIndex((x) => x.번호 === n); // 0-based
+  const dnum = dpos + 1;                               // 화면용 N차시
+  const dayInfo = 일차목록of(d).find((x) => x.일차 === day) || { 라벨: `${day}일차` };
+  const dayLabel = dayInfo.라벨;
+
+  document.title = `${dayLabel} ${dnum}차시 · ${c.제목} · ${d.강의명}`;
+
+  // 상단 네비 (같은 일차의 차시만)
+  const nav = dayList
     .map(
-      (x) =>
-        `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}">${x.번호}차시</a>`
+      (x, i) =>
+        `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}">${i + 1}차시</a>`
     )
     .join("");
   document.getElementById("상단네비").innerHTML =
-    `<a class="home" href="index.html">← 목록</a>` + nav;
+    `<a class="home" href="index.html">← 목록</a>` +
+    `<span class="day-tag">${esc(dayLabel)}</span>` +
+    nav;
 
   // 히어로
   document.getElementById("세션히어로").innerHTML = `
     <div class="wrap">
-      <div class="eyebrow">${n}차시 · ${esc(d.강의명)}</div>
+      <div class="eyebrow">${esc(dayLabel)} · ${dnum}차시 · ${esc(d.강의명)}</div>
       <h1>${esc(c.제목)}</h1>
       <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(d.강의일자)}</div>
     </div>`;
@@ -171,12 +211,12 @@ function renderSession() {
     html += `</section>`;
   });
 
-  // 이전/다음
-  const prev = d.차시[idx - 1];
-  const next = d.차시[idx + 1];
+  // 이전/다음 (같은 일차 안에서)
+  const prev = dayList[dpos - 1];
+  const next = dayList[dpos + 1];
   html += `<div class="pager">
-    ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${prev.번호}차시</button></a>` : `<span class="spacer"></span>`}
-    ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${next.번호}차시 →</button></a>` : `<span class="spacer"></span>`}
+    ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${dpos}차시</button></a>` : `<span class="spacer"></span>`}
+    ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${dpos + 2}차시 →</button></a>` : `<span class="spacer"></span>`}
   </div>`;
 
   document.getElementById("세션본문").innerHTML = html;
