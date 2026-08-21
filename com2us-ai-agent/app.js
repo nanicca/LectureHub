@@ -68,7 +68,10 @@ function renderIndex() {
           </div>
           ${f.잠금
             ? `<span class="btn locked">🔒 ${esc(f.잠금문구 || "준비 중")}</span>`
-            : `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>`}
+            : /^(https?:|mailto:|#)/i.test(f.링크)
+              // 외부 주소는 새 창에서 열고, 강의 폴더 안의 파일은 바로 내려받게 합니다
+              ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>`
+              : `<a class="btn" href="${esc(f.링크)}" download>${esc(f.버튼 || "다운로드")}</a>`}
         </div>`;
       })
       .join("");
