@@ -93,7 +93,7 @@ function renderSession() {
       <div class="eyebrow">${n}차시 · ${esc(d.강의명)}</div>
       <h1>${esc(c.제목)}</h1>
       <div class="meta-row">
-        <img class="org-logo" src="gg-fire-academy-logo.png" alt="경기도소방학교" />
+        <span class="org-logo-badge"><img class="org-logo" src="gg-fire-academy-logo.png" alt="경기도소방학교" /></span>
         <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(d.강의일자)}</div>
       </div>
     </div>`;
