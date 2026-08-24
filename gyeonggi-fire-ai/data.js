@@ -21,6 +21,12 @@ const 강의정보 = {
   // 다운로드/링크 버튼. 없으면 [] 로 두세요.
   자료: [
     {
+      이름: "강의 교안 (PDF)",
+      링크: "https://drive.google.com/file/d/1tr8pJPLDyyDieerBj-sfPvnAzgsHSpMn/view?usp=sharing",
+      설명: "오늘 사용하는 전체 슬라이드 201장 (원본)",
+      버튼: "열기"
+    },
+    {
       이름: "실습 공유보드 (패들렛)",
       링크: "https://padlet.com/nanicca00/0825-tj8v4oepk4mvzv0o",
       설명: "QR을 찍어 오늘 실습 결과물과 프롬프트를 함께 공유합니다",
