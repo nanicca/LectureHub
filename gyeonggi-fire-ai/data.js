@@ -28,11 +28,6 @@ const 강의정보 = {
       이미지: "padlet-qr.png"
     },
     {
-      이름: "실습 프롬프트 모음 (Word)",
-      링크: "ai-practice-prompts.docx",
-      설명: "챗GPT·제미나이·젬스·클로드 실습 프롬프트 전체 모음"
-    },
-    {
       이름: "화재출동 분석 실습데이터 (Excel)",
       링크: "fire-dispatch-practice-data.xlsx",
       설명: "3차시 제미나이 캔버스 데이터 분석 실습용 월별 출동건수"
