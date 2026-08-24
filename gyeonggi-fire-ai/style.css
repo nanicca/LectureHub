@@ -83,6 +83,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- 강사 소개 ---------- */
 .instructor {
+  position: relative; z-index: 2; /* 히어로의 그라데이션 위로 흰 카드가 확실히 덮이도록 고정 */
   margin-top: -36px; margin-bottom: 48px;
 }
 .instructor .box {
