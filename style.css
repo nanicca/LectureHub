@@ -33,32 +33,24 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- 헤더 / Hero ---------- */
 .hero {
+  position: relative;
   background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
   color: #fff;
   padding: 64px 0 72px;
   text-align: center;
 }
-.hero .brand-logo {
-  display: inline-flex;
-  align-items: center;
-  background: #fff;
-  padding: 8px 14px;
-  border-radius: 10px;
-  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.15);
-  margin-bottom: 20px;
+.hero .date-row,
+.s-hero .meta-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 18px;
 }
-.hero .brand-logo img {
-  height: 24px;
-  width: auto;
-  display: block;
-}
+.s-hero .meta-row { justify-content: flex-start; margin-top: 10px; margin-bottom: 0; }
 .hero .date {
   display: inline-block;
   background: rgba(255, 255, 255, 0.18);
   padding: 6px 16px;
   border-radius: 999px;
   font-size: 14px;
-  margin-bottom: 18px;
 }
 .hero h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
 .hero .subtitle { margin-top: 12px; font-size: 17px; opacity: 0.92; }
@@ -66,6 +58,28 @@ a { color: inherit; text-decoration: none; }
   max-width: 680px; margin: 20px auto 0;
   font-size: 15px; opacity: 0.88;
 }
+
+/* 기관 로고 (날짜/메타 옆) — 협회 로고와 동일하게 밝은 배지 박스 위에 얹음 */
+.org-logo-badge {
+  display: inline-flex; align-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  padding: 5px 10px;
+  line-height: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.org-logo-badge .org-logo { height: 20px; width: auto; display: block; }
+
+/* 협회 로고 (헤더 우측 상단 배지) */
+.brand-corner {
+  position: absolute; top: 18px; right: 20px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 10px;
+  padding: 7px 12px;
+  line-height: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+.brand-corner img { height: 22px; width: auto; display: block; }
 
 /* ---------- 강사 소개 ---------- */
 .instructor {
@@ -178,6 +192,7 @@ footer {
 .topnav a.active { background: var(--main); color: #fff; }
 
 .s-hero {
+  position: relative;
   background: linear-gradient(135deg, var(--main) 0%, var(--main-dark) 100%);
   color: #fff; padding: 44px 0 48px;
 }
@@ -266,10 +281,14 @@ tr:last-child td { border-bottom: none; }
   .cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
+  /* 열이 많은 표도 휴대폰에서 읽히도록 여백·글자 축소 */
+  th, td { padding: 9px 10px; font-size: 12.5px; }
+  .brand-corner { top: 12px; right: 12px; padding: 5px 9px; }
+  .brand-corner img { height: 16px; }
+  .org-logo-badge { padding: 4px 8px; }
+  .org-logo-badge .org-logo { height: 15px; }
   .hero h1 { font-size: 28px; }
   .s-hero h1 { font-size: 23px; }
-  .hero .brand-logo { padding: 6px 12px; }
-  .hero .brand-logo img { height: 20px; }
   .cards, .files { grid-template-columns: 1fr; }
   .instructor .tags { margin-left: 0; }
   .file .btn { margin-left: 0; }
