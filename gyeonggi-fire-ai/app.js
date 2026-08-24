@@ -128,6 +128,16 @@ function renderSession() {
         .join("")}</tbody></table>`;
     } else if (s.type === "실습") {
       if (s.설명) html += `<p>${esc(s.설명)}</p>`;
+      if (s.첨부파일 && s.첨부파일.length) {
+        html += `<div class="attach-row">${s.첨부파일
+          .map(
+            (f) =>
+              `<a class="attach-file" href="${esc(f.링크)}" target="_blank" rel="noopener">
+                <span class="ico">📎</span> ${esc(f.이름)} ${esc(f.버튼 || "다운로드")}
+              </a>`
+          )
+          .join("")}</div>`;
+      }
       s.프롬프트.forEach((p) => {
         html += `<div class="prompt">
           <span class="label">${esc(p.라벨 || "프롬프트")}</span>

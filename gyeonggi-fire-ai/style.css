@@ -234,6 +234,17 @@ th, td { padding: 12px 16px; text-align: left; font-size: 14px;
 th { background: #f1f2f9; font-weight: 700; }
 tr:last-child td { border-bottom: none; }
 
+/* 실습에 딸린 첨부파일 다운로드 */
+.attach-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.attach-file {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #eef0ff; color: var(--main-dark); font-weight: 700; font-size: 14px;
+  padding: 10px 16px; border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.attach-file:hover { background: #e2e5ff; }
+.attach-file .ico { font-size: 16px; }
+
 /* 실습 / 프롬프트 카드 */
 .prompt {
   background: var(--card); border: 1px solid var(--border);
