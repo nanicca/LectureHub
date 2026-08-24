@@ -287,6 +287,9 @@ tr:last-child td { border-bottom: none; }
   .brand-corner img { height: 16px; }
   .org-logo-badge { padding: 4px 8px; }
   .org-logo-badge .org-logo { height: 15px; }
+  /* 좁은 화면에서는 로고 배지 옆에 텍스트가 눌려 두 줄로 밀리므로 세로로 쌓음 */
+  .s-hero .meta-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .hero .date-row { flex-direction: column; gap: 6px; }
   .hero h1 { font-size: 28px; }
   .s-hero h1 { font-size: 23px; }
   .cards, .files { grid-template-columns: 1fr; }
