@@ -32,13 +32,13 @@ a { color: inherit; text-decoration: none; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
 
 /* ---------- 로고 (히어로 안, 배경 위에 표시) ---------- */
-.brand-logo { height: 30px; width: auto; object-fit: contain; }
+.brand-logo { width: auto; object-fit: contain; }
 .brand-logo.toda {
-  height: 24px; background: #fff; padding: 5px 10px; border-radius: 8px;
+  height: 40px; background: #fff; padding: 8px 14px; border-radius: 10px;
 }
 .brand-logo.ablearn {
-  position: absolute; top: 18px; right: 20px; z-index: 5;
-  height: 26px; background: #fff; padding: 5px 10px; border-radius: 8px;
+  position: absolute; top: 16px; right: 20px; z-index: 5;
+  height: 42px; background: #fff; padding: 8px 14px; border-radius: 10px;
 }
 .brand-row {
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -70,6 +70,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- 강사 소개 ---------- */
 .instructor {
+  position: relative; z-index: 2;
   margin-top: -36px; margin-bottom: 48px;
 }
 .instructor .box {
@@ -290,6 +291,6 @@ tr:last-child td { border-bottom: none; }
   .file .btn { margin-left: 0; }
   .file { flex-wrap: wrap; }
   .file-download { flex-wrap: wrap; }
-  .brand-logo.toda { height: 18px; }
-  .brand-logo.ablearn { height: 18px; }
+  .brand-logo.toda { height: 28px; padding: 6px 10px; }
+  .brand-logo.ablearn { height: 28px; padding: 6px 10px; top: 12px; right: 14px; }
 }
