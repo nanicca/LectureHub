@@ -169,6 +169,15 @@ function renderSession() {
       html += `<ul class="checklist">${s.항목
         .map((it) => `<li>${esc(it)}</li>`)
         .join("")}</ul>`;
+    } else if (s.type === "링크") {
+      // 바로가기 버튼 묶음 — 전부 새 창에서 열립니다
+      if (s.설명) html += `<p>${esc(s.설명)}</p>`;
+      html += `<div class="linkrow">${s.링크들
+        .map(
+          (l) =>
+            `<a class="btn" href="${esc(l.주소)}" target="_blank" rel="noopener">${esc(l.이름)} ↗</a>`
+        )
+        .join("")}</div>`;
     }
 
     html += `</section>`;

@@ -321,3 +321,11 @@ tr:last-child td { border-bottom: none; }
   cursor: default;
 }
 .btn.locked:hover { background: #e9ebf1; }
+
+/* 바로가기 버튼 묶음 — data.js 의 type: "링크" 섹션 */
+.linkrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
