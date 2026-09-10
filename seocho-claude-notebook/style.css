@@ -152,7 +152,10 @@ a { color: inherit; text-decoration: none; }
 .file .ico { font-size: 26px; }
 .file .name { font-weight: 700; }
 .file .desc { color: var(--text-sub); font-size: 13px; }
-.file .btn { margin-left: auto; }
+.file .btn {
+  margin-left: auto; flex: 0 0 auto;
+  min-width: 96px; text-align: center; white-space: nowrap;
+}
 
 /* ---------- 버튼 ---------- */
 .btn {
@@ -283,7 +286,7 @@ tr:last-child td { border-bottom: none; }
   .s-hero h1 { font-size: 23px; }
   .cards, .files { grid-template-columns: 1fr; }
   .instructor .tags { margin-left: 0; }
-  .file .btn { margin-left: 0; }
+  .file .btn { margin-left: 0; width: 100%; }
   .file { flex-wrap: wrap; }
 }
 
