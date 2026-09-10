@@ -30,6 +30,13 @@ const 강의정보 = {
 
   자료: [
     {
+      이름: "실습 공유 패들렛 (결과물 · 질문 · 파일 공유)",
+      링크: "https://padlet.com/nanicca00/padlet-s023gjxkwdzvek31aeq4",
+      설명: "오늘 실습 결과물과 프롬프트, 질문을 여기에 올려 주세요 · QR을 누르면 크게 보입니다",
+      버튼: "참여하기",
+      이미지: "padlet-qr.png"
+    },
+    {
       이름: "출석 · 만족도 설문",
       링크: "https://lms.ehancom.com/survey-attend.html?courseId=948c3d45-eb50-4db7-8ccb-7e240de80f4a",
       설명: "짧은 링크 948c3d45 · QR을 찍거나 버튼을 눌러 참여해 주세요",
