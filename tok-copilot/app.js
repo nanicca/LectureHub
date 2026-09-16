@@ -50,12 +50,12 @@ function renderIndex() {
         <div class="file">
           ${f.이미지
             ? `<a href="${esc(f.이미지)}" target="_blank" rel="noopener"><img src="${esc(f.이미지)}" alt="QR" style="width:76px;height:76px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid var(--border)"></a>`
-            : `<span class="ico">📄</span>`}
+            : `<span class="ico">${esc(f.아이콘 || "📄")}</span>`}
           <div>
             <div class="name">${esc(f.이름)}</div>
             <div class="desc">${esc(f.설명 || "")}</div>
           </div>
-          <a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>
+          <a class="btn" href="${esc(f.링크)}" ${/^https?:\/\//.test(f.링크) ? 'target="_blank" rel="noopener"' : "download"}>${esc(f.버튼 || "다운로드")}</a>
         </div>`
       )
       .join("");

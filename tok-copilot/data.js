@@ -25,6 +25,20 @@ const 강의정보 = {
   // 다운로드/링크 버튼
   자료: [
     {
+      이름: "강의 교안 (PDF · 전체 98장)",
+      링크: "deck/TOK-Copilot-lecture-deck.pdf",
+      설명: "오늘 강의 슬라이드 전체 · 약 15MB · 휴대폰에서도 바로 열립니다",
+      아이콘: "📑",
+      버튼: "교안 받기"
+    },
+    {
+      이름: "강의 교안 (PowerPoint 원본)",
+      링크: "deck/TOK-Copilot-lecture-deck.pptx",
+      설명: "PPTX 파일 · 약 62MB · PC에서 내려받기를 권장합니다",
+      아이콘: "📑",
+      버튼: "PPT 받기"
+    },
+    {
       이름: "실습 패들렛 (프롬프트 공유)",
       링크: "https://padlet.com/bd2_5/9-copilot-s023972mnp15sid0ap01",
       설명: "실습 프롬프트와 결과를 함께 올리는 공간입니다",
