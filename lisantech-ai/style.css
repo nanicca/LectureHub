@@ -444,3 +444,13 @@ td { word-break: keep-all; }
   font-size: 13px; font-weight: 700;
 }
 .dl-btn:hover { background: var(--main); color: #fff; }
+
+/* 첫 화면 맨 위 왼쪽 — 강사 소개 웹사이트 링크 */
+.instructor-link {
+  position: absolute; top: 16px; left: 20px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18); color: #fff;
+  font-size: 13px; font-weight: 700;
+}
+.instructor-link:hover { background: #fff; color: var(--main-dark); }
+@media (max-width: 560px) { .hero { padding-top: 60px; } .instructor-link { top: 12px; left: 16px; } }
