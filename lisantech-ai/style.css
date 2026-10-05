@@ -434,3 +434,13 @@ td { word-break: keep-all; }
   .flow .node { min-width: 0; }
   .figs.small figure { max-width: 100%; }
 }
+
+/* 프롬프트 카드 안 다운로드 버튼 (data.js 의 파일: {이름, 주소}) */
+.prompt-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.prompt-actions .copy-btn { margin-top: 0; }
+.dl-btn {
+  display: inline-block; padding: 7px 14px; border-radius: 8px;
+  border: 1px solid var(--main); color: var(--main); background: #fff;
+  font-size: 13px; font-weight: 700;
+}
+.dl-btn:hover { background: var(--main); color: #fff; }

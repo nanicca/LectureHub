@@ -151,7 +151,10 @@ function renderSection(s, i) {
         (p) => `<div class="prompt">
           <span class="label">${esc(p.라벨 || "프롬프트")}</span>
           <pre>${esc(p.내용)}</pre>
-          <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 복사</button>
+          <div class="prompt-actions">
+            <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 복사</button>
+            ${p.파일 ? `<a class="dl-btn" href="${esc(p.파일.주소)}" download>⬇ ${esc(p.파일.이름)}</a>` : ""}
+          </div>
         </div>`
       )
       .join("")}</div>`;
