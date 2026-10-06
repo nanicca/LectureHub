@@ -52,6 +52,13 @@ const 강의정보 = {
       링크: "chatgpt-image-prompts-99.pdf",
       설명: "9개 카테고리 · 화질·구도·시점·분위기 키워드 (실습⑥)",
       버튼: "다운로드"
+    },
+    {
+      이름: "만족도 조사",
+      링크: "https://docs.google.com/forms/d/1i7-VGHipvcMq25v-xEUzN-JEwE9VLXZ8zZ_PIIq0Xi8/viewform",
+      설명: "강의 종료 후 참여해 주세요 · QR을 누르면 크게 보입니다",
+      버튼: "참여하기",
+      이미지: "survey-qr.png"
     }
   ],
 

@@ -454,3 +454,6 @@ td { word-break: keep-all; }
 }
 .instructor-link:hover { background: #fff; color: var(--main-dark); }
 @media (max-width: 560px) { .hero { padding-top: 60px; } .instructor-link { top: 12px; left: 16px; } }
+
+/* 자료 버튼 글자가 두 줄로 꺾이지 않게 */
+.file .btn { white-space: nowrap; flex-shrink: 0; }
