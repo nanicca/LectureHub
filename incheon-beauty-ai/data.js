@@ -71,18 +71,6 @@ const 강의정보 = {
       버튼: "열기"
     },
     {
-      이름: "미용예술과 학과소개",
-      링크: "https://ibas.icehs.kr/sub/info.do?m=0305&s=inyeogong",
-      설명: "인천뷰티예술고등학교 홈페이지",
-      버튼: "열기"
-    },
-    {
-      이름: "시각영상디자인과 학과소개",
-      링크: "https://ibas.icehs.kr/sub/info.do?m=0306&s=inyeogong",
-      설명: "인천뷰티예술고등학교 홈페이지",
-      버튼: "열기"
-    },
-    {
       이름: "캔바 (배경 제거)",
       링크: "https://www.canva.com",
       설명: "4차시 · 앱에서 Background Pro / Background Eraser 사용",
