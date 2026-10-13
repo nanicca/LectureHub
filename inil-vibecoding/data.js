@@ -40,6 +40,12 @@ const 강의정보 = {
       이미지: "padlet-qr.png"
     },
     {
+      이름: "강의 교안 (PDF)",
+      링크: "inil-vibecoding-slides.pdf",
+      설명: "말로 만드는 수업 도구 · 전체 슬라이드 73장 · 약 2MB",
+      버튼: "다운로드"
+    },
+    {
       이름: "학생 명단 비식별화 실습 파일",
       링크: "student-list-practice.xlsx",
       설명: "실습 4 · 실습 시트에서 빠른 채우기(Ctrl + E) 연습 · 가상 데이터입니다",
