@@ -26,10 +26,13 @@ function renderIndex() {
   const blog = d.강사.블로그
     ? `<a class="blog" href="${esc(d.강사.블로그)}" target="_blank" rel="noopener">블로그 ↗</a>`
     : "";
+  const intro = d.강사.소개링크
+    ? `<a class="blog" href="${esc(d.강사.소개링크)}" target="_blank" rel="noopener">👩‍🏫 강사 소개 ↗</a>`
+    : "";
   document.getElementById("강사").innerHTML = `
     <div class="name">${esc(d.강사.이름)} <span>강사</span></div>
     <div class="tags">${tags}</div>
-    ${blog}`;
+    ${intro}${blog}`;
 
   // 차시 카드
   document.getElementById("차시목록").innerHTML = d.차시
