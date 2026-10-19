@@ -140,6 +140,12 @@ function renderSession() {
           <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 복사</button>
         </div>`;
       });
+      if (s.원본 && s.원본.주소) {
+        html += `<div class="source">
+          <a class="source-btn" href="${esc(s.원본.주소)}" target="_blank" rel="noopener">▶ ${esc(s.원본.라벨 || "원본 보기")} ↗</a>
+          ${s.원본.설명 ? `<span class="source-note">${esc(s.원본.설명)}</span>` : ""}
+        </div>`;
+      }
     } else if (s.type === "체크리스트") {
       html += `<ul class="checklist">${s.항목
         .map((it) => `<li>${esc(it)}</li>`)
