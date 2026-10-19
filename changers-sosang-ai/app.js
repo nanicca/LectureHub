@@ -137,7 +137,7 @@ function renderSession() {
         html += `<div class="prompt">
           <span class="label">${esc(p.라벨 || "프롬프트")}</span>
           <pre>${mark(p.내용)}</pre>
-          <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 프롬프트 복사</button>
+          <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 복사</button>
         </div>`;
       });
     } else if (s.type === "체크리스트") {
@@ -165,7 +165,7 @@ function renderSession() {
       const text = decodeURIComponent(btn.dataset.copy);
       const ok = () => {
         const old = btn.textContent;
-        btn.textContent = "✓ 복사됨! 붙여 넣으세요";
+        btn.textContent = "✓ 복사됨";
         btn.classList.add("done");
         setTimeout(() => {
           btn.textContent = old;
