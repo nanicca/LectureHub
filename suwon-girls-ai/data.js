@@ -26,7 +26,7 @@ const 강의 = {
   제목: "고교 교사를 위한 생성형 AI",
   부제: "ChatGPT 무료 계정으로 · 수업설계부터 세특까지",
   강사: "강사 전혜영",
-  일자: "2026. 11. 6.",
+  일자: "2026. 11. 4.",
   패들렛: "https://padlet.com/nanicca00/1104-s02539be6wnszf2b2ej7",
   강사소개: "https://nanicca.github.io/#top",
   로고: "logo.png",   /* 강의 폴더 안의 로고 파일 이름 */
