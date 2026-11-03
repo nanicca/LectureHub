@@ -32,7 +32,7 @@
         return `<div class="listbox">${b.제목 ? `<h4>${esc(b.제목)}</h4>` : ""}<ul>${b.목록.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
       case "막대":
         return `<div class="bars"><h4>${esc(b.제목)}</h4>${b.항목.map((it) => `
-          <div class="bar"><span>${esc(it[0])}</span><div class="tr"><div class="fill" style="width:${it[1]}%"></div></div><em>${it[1]}%</em></div>`).join("")}
+          <div class="bar"><span>${esc(it[0])}</span><div class="tr"><div class="fill" style="--w:${it[1]}%"></div></div><em data-n="${it[1]}">${it[1]}%</em></div>`).join("")}
           ${b.주석 ? `<small>${esc(b.주석)}</small>` : ""}</div>`;
       case "프롬프트": {
         const id = prompts.push(b.내용) - 1;
@@ -123,6 +123,27 @@
   }
   const fitAll = () => pages.forEach(fit);
 
+  /* ---------- 막대그래프 나타나기 (페이지에 올 때마다 다시 재생) ---------- */
+  function playBars(pg) {
+    pg.classList.remove("active");
+    const nums = pg.querySelectorAll(".bar em[data-n]");
+    if (!nums.length) { pg.classList.add("active"); return; }
+    nums.forEach((el) => (el.textContent = "0%"));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pg.classList.add("active");
+      nums.forEach((el, i) => {
+        const to = +el.dataset.n, delay = 200 + i * 180, dur = 1100;
+        const t0 = performance.now() + delay;
+        const tick = (t) => {
+          const k = Math.min(1, Math.max(0, (t - t0) / dur));
+          el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))) + "%";
+          if (k < 1 && pg.classList.contains("active")) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }));
+  }
+
   /* ---------- 이동 ---------- */
   let cur = 0;
   function go(i, instant) {
@@ -130,7 +151,8 @@
     if (instant) track.style.transition = "none";
     track.style.transform = `translateX(${-cur * 100}%)`;
     if (instant) { track.offsetHeight; track.style.transition = ""; }
-    pages.forEach((pg, k) => pg.setAttribute("aria-hidden", k !== cur));
+    pages.forEach((pg, k) => { pg.setAttribute("aria-hidden", k !== cur); if (k !== cur) pg.classList.remove("active"); });
+    playBars(pages[cur]);
     pages[cur].scrollTop = 0;
     $("#counter").textContent = `${cur + 1} / ${N}`;
     $("#progressBar").style.width = `${((cur + 1) / N) * 100}%`;

@@ -171,7 +171,16 @@ a { color: inherit; text-decoration: none; }
 .bars h4 { font-size: 1.2em; margin-bottom: .8em; }
 .bar { display: grid; grid-template-columns: 4.5em 1fr 3em; align-items: center; gap: .6em; margin-bottom: .55em; }
 .bar .tr { height: 1.2em; background: var(--bg); border-radius: 6px; overflow: hidden; }
-.bar .fill { height: 100%; background: var(--main); border-radius: 6px; }
+.bar .fill { height: 100%; width: 0; background: var(--main); border-radius: 6px; }
+.bar { opacity: 0; transform: translateX(-12px); }
+.page.active .bar { opacity: 1; transform: none; transition: opacity .5s, transform .5s; }
+.page.active .bar .fill { width: var(--w); transition: width 1.1s cubic-bezier(.22, .8, .24, 1); }
+.page.active .bar:nth-of-type(1), .page.active .bar:nth-of-type(1) .fill { transition-delay: .2s; }
+.page.active .bar:nth-of-type(2), .page.active .bar:nth-of-type(2) .fill { transition-delay: .38s; }
+.page.active .bar:nth-of-type(3), .page.active .bar:nth-of-type(3) .fill { transition-delay: .56s; }
+.page.active .bar:nth-of-type(4), .page.active .bar:nth-of-type(4) .fill { transition-delay: .74s; }
+.page.active .bar:nth-of-type(5), .page.active .bar:nth-of-type(5) .fill { transition-delay: .92s; }
+@media (prefers-reduced-motion: reduce) { .bar, .bar .fill { transition: none !important; } }
 .bar:first-of-type .fill { background: var(--point); }
 .bar em { font-style: normal; font-weight: 700; text-align: right; }
 .bars small { display: block; color: var(--text-sub); margin-top: .5em; font-size: .8em; }
