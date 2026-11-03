@@ -31,8 +31,10 @@
       case "목록":
         return `<div class="listbox">${b.제목 ? `<h4>${esc(b.제목)}</h4>` : ""}<ul>${b.목록.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
       case "막대":
-        return `<div class="bars"><h4>${esc(b.제목)}</h4>${b.항목.map((it) => `
-          <div class="bar"><span>${esc(it[0])}</span><div class="tr"><div class="fill" style="--w:${it[1]}%"></div></div><em data-n="${it[1]}">${it[1]}%</em></div>`).join("")}
+        return `<div class="bars${b.클릭공개 ? " hold" : ""}"><h4>${esc(b.제목)}</h4>
+          ${b.클릭공개 ? `<div class="cover-q"><p>${esc(b.질문 || "뒤에 올 말을 맞혀 보세요")}</p>
+            <button class="lbtn" type="button" data-reveal>결과 보기 ▶</button></div>` : ""}${b.항목.map((it, i) => `
+          <div class="bar${i === 0 ? " first" : ""}" style="--d:${(0.2 + i * 0.18).toFixed(2)}s"><span>${esc(it[0])}</span><div class="tr"><div class="fill" style="--w:${it[1]}%"></div></div><em data-n="${it[1]}">${it[1]}%</em></div>`).join("")}
           ${b.주석 ? `<small>${esc(b.주석)}</small>` : ""}</div>`;
       case "프롬프트": {
         const id = prompts.push(b.내용) - 1;
@@ -123,12 +125,19 @@
   }
   const fitAll = () => pages.forEach(fit);
 
-  /* ---------- 막대그래프 나타나기 (페이지에 올 때마다 다시 재생) ---------- */
+  /* ---------- 막대그래프 나타나기 ----------
+   * 클릭공개 그래프: 처음엔 질문만 보이고, [결과 보기]·다음 버튼·→ 키를 누르면 나타남 */
+  const waiting = (pg) => !!pg.querySelector(".bars.hold") && !pg.classList.contains("active");
   function playBars(pg) {
     pg.classList.remove("active");
     const nums = pg.querySelectorAll(".bar em[data-n]");
-    if (!nums.length) { pg.classList.add("active"); return; }
     nums.forEach((el) => (el.textContent = "0%"));
+    if (pg.querySelector(".bars.hold")) return;
+    reveal(pg);
+  }
+  function reveal(pg) {
+    const nums = pg.querySelectorAll(".bar em[data-n]");
+    if (!nums.length) { pg.classList.add("active"); return; }
     requestAnimationFrame(() => requestAnimationFrame(() => {
       pg.classList.add("active");
       nums.forEach((el, i) => {
@@ -167,7 +176,8 @@
   }
 
   $("#prevBtn").onclick = () => go(cur - 1);
-  $("#nextBtn").onclick = () => go(cur + 1);
+  const next = () => (waiting(pages[cur]) ? reveal(pages[cur]) : go(cur + 1));
+  $("#nextBtn").onclick = next;
   $("#homeBtn").onclick = () => go(0);
 
   const toc = $("#toc");
@@ -180,6 +190,7 @@
     if (g) { go(+g.dataset.go); toc.hidden = true; return; }
     const s = e.target.closest("[data-sec]");
     if (s) { go(firstOf[s.dataset.sec]); return; }
+    if (e.target.closest("[data-reveal], .bars.hold") && waiting(pages[cur])) { reveal(pages[cur]); return; }
     const c = e.target.closest(".copy");
     if (c) copy(prompts[+c.dataset.p], c);
   });
@@ -188,7 +199,7 @@
     if (e.target.closest("input, textarea")) return;
     if (e.key === "Escape") { toc.hidden = true; return; }
     if (!toc.hidden) return;
-    if (["ArrowRight", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey)) { e.preventDefault(); go(cur + 1); }
+    if (["ArrowRight", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey)) { e.preventDefault(); next(); }
     else if (["ArrowLeft", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey)) { e.preventDefault(); go(cur - 1); }
     else if (e.key === "Home") go(0);
     else if (e.key === "End") go(N - 1);
@@ -200,7 +211,7 @@
   vp.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
   vp.addEventListener("touchend", (e) => {
     const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) go(cur + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next() : go(cur - 1));
   });
 
   /* 트랙패드 좌우 밀기 */
@@ -211,7 +222,7 @@
     const now = Date.now();
     if (now < wheelLock) return;
     wheelLock = now + 700;
-    go(cur + (e.deltaX > 0 ? 1 : -1));
+    e.deltaX > 0 ? next() : go(cur - 1);
   }, { passive: false });
 
   /* ---------- 복사 ---------- */

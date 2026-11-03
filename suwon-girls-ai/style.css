@@ -175,14 +175,22 @@ a { color: inherit; text-decoration: none; }
 .bar { opacity: 0; transform: translateX(-12px); }
 .page.active .bar { opacity: 1; transform: none; transition: opacity .5s, transform .5s; }
 .page.active .bar .fill { width: var(--w); transition: width 1.1s cubic-bezier(.22, .8, .24, 1); }
-.page.active .bar:nth-of-type(1), .page.active .bar:nth-of-type(1) .fill { transition-delay: .2s; }
-.page.active .bar:nth-of-type(2), .page.active .bar:nth-of-type(2) .fill { transition-delay: .38s; }
-.page.active .bar:nth-of-type(3), .page.active .bar:nth-of-type(3) .fill { transition-delay: .56s; }
-.page.active .bar:nth-of-type(4), .page.active .bar:nth-of-type(4) .fill { transition-delay: .74s; }
-.page.active .bar:nth-of-type(5), .page.active .bar:nth-of-type(5) .fill { transition-delay: .92s; }
+.page.active .bar, .page.active .bar .fill { transition-delay: var(--d, 0s); }
 @media (prefers-reduced-motion: reduce) { .bar, .bar .fill { transition: none !important; } }
-.bar:first-of-type .fill { background: var(--point); }
+.bar.first .fill { background: var(--point); }
 .bar em { font-style: normal; font-weight: 700; text-align: right; }
+/* 클릭공개: 결과 전엔 질문만 */
+.bars.hold { position: relative; cursor: pointer; }
+.page.active .bars.hold { cursor: default; }
+.cover-q {
+  position: absolute; inset: 3.6em 1.3em 1.3em; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1em; text-align: center;
+  background: var(--point-soft); border: 2px dashed #dcc596; border-radius: 12px;
+  transition: opacity .35s;
+}
+.cover-q p { font-size: 1.15em; font-weight: 700; color: var(--main-dark); }
+.page.active .cover-q { opacity: 0; pointer-events: none; }
+.bars.hold h4 { font-size: 1.5em; }
 .bars small { display: block; color: var(--text-sub); margin-top: .5em; font-size: .8em; }
 
 /* ---------- 프롬프트 ---------- */
