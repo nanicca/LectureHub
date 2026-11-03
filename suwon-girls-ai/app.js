@@ -61,12 +61,16 @@
   function pageHTML(p) {
     if (p.유형 === "표지") {
       return `<section class="page cover"><div class="inner">
-        <span class="org">${esc(강의.기관)}</span>
+        <div class="cover-top">
+          ${강의.로고 ? `<span class="logo-badge"><img src="${esc(강의.로고)}" alt="학교 로고"></span>` : ""}
+          <span class="org">${esc(강의.기관)}</span>
+        </div>
         <h1>${esc(강의.제목).replace("생성형 AI", "<em>생성형 AI</em>")}</h1>
         <p class="sub">${esc(강의.부제)}</p>
         <p class="meta">${esc(강의.강사)} · ${esc(강의.일자)}</p>
         <div class="btns">
           <a class="lbtn" href="${esc(강의.패들렛)}" target="_blank" rel="noopener">패들렛 열기 ↗</a>
+          ${강의.강사소개 ? `<a class="lbtn ghost" href="${esc(강의.강사소개)}" target="_blank" rel="noopener">👩‍🏫 강사 소개 ↗</a>` : ""}
           <button class="lbtn ghost" type="button" data-go="1">시작하기 →</button>
         </div>
         <p class="hint">← → 방향키, 화면 밀기, 아래 버튼으로 넘겨 보세요 · 오른쪽 위 ☰ 목차</p>
@@ -91,7 +95,7 @@
   track.innerHTML = 페이지.map(pageHTML).join("");
   const pages = [...track.children];
   const N = pages.length;
-  $("#homeBtn").textContent = 강의.제목;
+  $("#homeBtn").innerHTML = `${강의.로고 ? `<img src="${esc(강의.로고)}" alt="">` : ""}<span>${esc(강의.제목)}</span>`;
   document.title = `${강의.제목} · ${강의.기관}`;
 
   const firstOf = {};

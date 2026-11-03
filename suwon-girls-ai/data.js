@@ -28,6 +28,8 @@ const 강의 = {
   강사: "강사 전혜영",
   일자: "2026. 11. 6.",
   패들렛: "https://padlet.com/nanicca00/1104-s02539be6wnszf2b2ej7",
+  강사소개: "https://nanicca.github.io/#top",
+  로고: "logo.png",   /* 강의 폴더 안의 로고 파일 이름 */
 };
 
 /* 상단 메뉴에 보이는 파트 이름 (페이지의 섹션 값과 맞춰 주세요) */
