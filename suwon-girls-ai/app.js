@@ -82,6 +82,7 @@
         <p class="meta">${esc(강의.강사)} · ${esc(강의.일자)}</p>
         <div class="btns">
           <a class="lbtn" href="${esc(강의.패들렛)}" target="_blank" rel="noopener">패들렛 열기 ↗</a>
+          ${강의.교안 ? `<a class="lbtn" href="${esc(강의.교안.파일)}" download="${esc(강의.교안.이름)}">교안 PDF 내려받기 ↓</a>` : ""}
           ${강의.강사소개 ? `<a class="lbtn ghost" href="${esc(강의.강사소개)}" target="_blank" rel="noopener">👩‍🏫 강사 소개 ↗</a>` : ""}
           <button class="lbtn ghost" type="button" data-go="1">시작하기 ↓</button>
         </div>
@@ -91,7 +92,9 @@
     if (p.유형 === "구분") {
       return `<section class="page divider"><div class="inner">
         <div class="dk">${esc(p.머리)}</div><h2>${esc(p.제목)}</h2>${p.설명 ? `<p>${esc(p.설명)}</p>` : ""}
-        ${p.버튼 ? `<div class="btns">${[].concat(p.버튼).map((b) => `<a class="lbtn" href="${esc(link(b.링크))}" target="_blank" rel="noopener">${esc(b.라벨)} ↗</a>`).join("")}</div>` : ""}
+        ${p.버튼 ? `<div class="btns">${[].concat(p.버튼).map((b) => (b.내려받기
+          ? `<a class="lbtn" href="${esc(b.링크)}" download="${esc(b.내려받기)}">${esc(b.라벨)} ↓</a>`
+          : `<a class="lbtn" href="${esc(link(b.링크))}" target="_blank" rel="noopener">${esc(b.라벨)} ↗</a>`)).join("")}</div>` : ""}
       </div></section>`;
     }
     return `<section class="page"><div class="inner">
