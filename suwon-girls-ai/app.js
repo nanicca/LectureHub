@@ -6,7 +6,7 @@
 (function () {
   const $ = (s) => document.querySelector(s);
   const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const link = (l) => (l === "패들렛" ? 강의.패들렛 : l);
+  const link = (l) => (l === "패들렛" ? 강의.패들렛 : l === "강사소개" ? 강의.강사소개 : l);
   const prompts = [];
 
   /* ---------- 블록 그리기 ---------- */
@@ -42,7 +42,17 @@
           <button class="copy" type="button" data-p="${id}">복사</button></div><pre>${esc(b.내용)}</pre></div>`;
       }
       case "버튼":
-        return `<div class="btns"><a class="lbtn" href="${esc(link(b.링크))}" target="_blank" rel="noopener">${esc(b.라벨)} ↗</a></div>`;
+        return b.내려받기
+          ? `<div class="btns"><a class="lbtn" href="${esc(b.링크)}" download="${esc(b.내려받기)}">${esc(b.라벨)} ↓</a></div>`
+          : `<div class="btns"><a class="lbtn" href="${esc(link(b.링크))}" target="_blank" rel="noopener">${esc(b.라벨)} ↗</a></div>`;
+      case "이미지":
+        return `<div class="shots" style="grid-template-columns:repeat(${b.열 || 1},minmax(0,1fr))">${b.항목.map((it) => `
+          <figure class="shot"><a href="${esc(it[0])}" target="_blank" rel="noopener" aria-label="크게 보기">
+            <img src="${esc(it[0])}" alt="${esc(it[1])}" width="${it[2]}" height="${it[3]}" style="width:min(100%,calc(${b.높이 || 72}vh*${it[2]}/${it[3]}))"></a>
+            ${b.캡션 ? `<figcaption>${esc(it[1])}</figcaption>` : ""}</figure>`).join("")}</div>`;
+      case "표":
+        return `<div class="tbl-wrap"><table class="tbl"><thead><tr>${b.머리.map((h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead>
+          <tbody>${b.행.map((r) => `<tr>${r.map((c, i) => (i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`)).join("")}</tr>`).join("")}</tbody></table></div>`;
       default:
         return "";
     }
@@ -81,7 +91,7 @@
     if (p.유형 === "구분") {
       return `<section class="page divider"><div class="inner">
         <div class="dk">${esc(p.머리)}</div><h2>${esc(p.제목)}</h2>${p.설명 ? `<p>${esc(p.설명)}</p>` : ""}
-        ${p.버튼 ? `<div class="btns"><a class="lbtn" href="${esc(link(p.버튼.링크))}" target="_blank" rel="noopener">${esc(p.버튼.라벨)} ↗</a></div>` : ""}
+        ${p.버튼 ? `<div class="btns">${[].concat(p.버튼).map((b) => `<a class="lbtn" href="${esc(link(b.링크))}" target="_blank" rel="noopener">${esc(b.라벨)} ↗</a>`).join("")}</div>` : ""}
       </div></section>`;
     }
     return `<section class="page"><div class="inner">
