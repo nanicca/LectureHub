@@ -1,5 +1,5 @@
 /* =========================================================================
- *  app.js  —  화면 그리기 + 좌우 넘김 + 프롬프트 복사 (수정 불필요)
+ *  app.js  —  화면 그리기 + 세로 스크롤 메뉴 + 프롬프트 복사 (수정 불필요)
  *  내용은 data.js에서만 고치세요.
  * ========================================================================= */
 
@@ -73,9 +73,9 @@
         <div class="btns">
           <a class="lbtn" href="${esc(강의.패들렛)}" target="_blank" rel="noopener">패들렛 열기 ↗</a>
           ${강의.강사소개 ? `<a class="lbtn ghost" href="${esc(강의.강사소개)}" target="_blank" rel="noopener">👩‍🏫 강사 소개 ↗</a>` : ""}
-          <button class="lbtn ghost" type="button" data-go="1">시작하기 →</button>
+          <button class="lbtn ghost" type="button" data-go="1">시작하기 ↓</button>
         </div>
-        <p class="hint">← → 방향키, 화면 밀기, 아래 버튼으로 넘겨 보세요 · 오른쪽 위 ☰ 목차</p>
+        <p class="hint">아래로 스크롤해서 보세요 · 오른쪽 위 ☰ 목차</p>
       </div></section>`;
     }
     if (p.유형 === "구분") {
@@ -110,34 +110,16 @@
     <div class="toc-sec">${esc(s.이름)}</div>
     ${페이지.map((p, i) => (p.섹션 === s.id ? `<button class="toc-item" type="button" data-go="${i}"><i>${i + 1}</i>${esc(pageName(p))}</button>` : "")).join("")}`).join("");
 
-  /* ---------- 한 화면에 맞추기 (글자 크기 자동 축소) ---------- */
-  function fit(pg) {
-    const inner = pg.firstElementChild;
-    pg.classList.remove("scrollable");
-    let s = 1;
-    inner.style.setProperty("--s", s);
-    const avail = () => pg.clientHeight - parseFloat(getComputedStyle(pg).paddingTop) * 2;
-    while (inner.scrollHeight > avail() && s > 0.6) {
-      s -= 0.04;
-      inner.style.setProperty("--s", s.toFixed(2));
-    }
-    if (inner.scrollHeight > avail() + 2) pg.classList.add("scrollable");
-  }
-  const fitAll = () => pages.forEach(fit);
-
   /* ---------- 막대그래프 나타나기 ----------
-   * 클릭공개 그래프: 처음엔 질문만 보이고, [결과 보기]·다음 버튼·→ 키를 누르면 나타남 */
+   * 클릭공개 그래프: 처음엔 질문만 보이고, [결과 보기]·→ 키를 누르면 나타남
+   * 화면 밖으로 완전히 나가면 처음 상태로 돌아감 */
   const waiting = (pg) => !!pg.querySelector(".bars.hold") && !pg.classList.contains("active");
-  function playBars(pg) {
+  function resetBars(pg) {
     pg.classList.remove("active");
-    const nums = pg.querySelectorAll(".bar em[data-n]");
-    nums.forEach((el) => (el.textContent = "0%"));
-    if (pg.querySelector(".bars.hold")) return;
-    reveal(pg);
+    pg.querySelectorAll(".bar em[data-n]").forEach((el) => (el.textContent = "0%"));
   }
   function reveal(pg) {
     const nums = pg.querySelectorAll(".bar em[data-n]");
-    if (!nums.length) { pg.classList.add("active"); return; }
     requestAnimationFrame(() => requestAnimationFrame(() => {
       pg.classList.add("active");
       nums.forEach((el, i) => {
@@ -152,32 +134,60 @@
       });
     }));
   }
+  const barPages = pages.filter((pg) => pg.querySelector(".bars"));
+  barPages.forEach(resetBars);
+  const barWatch = new IntersectionObserver((list) => list.forEach((en) => {
+    const pg = en.target;
+    if (!en.isIntersecting) resetBars(pg);
+    else if (en.intersectionRatio >= 0.35 && !pg.querySelector(".bars.hold") && !pg.classList.contains("active")) reveal(pg);
+  }), { threshold: [0, 0.35] });
+  barPages.forEach((pg) => barWatch.observe(pg));
+  /* 화면에 전부 보이면서 결과를 기다리는 그래프 */
+  const waitingInView = () => barPages.find((pg) => {
+    const r = pg.querySelector(".bars").getBoundingClientRect();
+    return waiting(pg) && r.top >= $(".topbar").offsetHeight && r.bottom <= innerHeight;
+  });
 
   /* ---------- 이동 ---------- */
-  let cur = 0;
+  let cur = 0, curSec = null, hashTimer;
   function go(i, instant) {
-    cur = Math.max(0, Math.min(N - 1, i));
-    if (instant) track.style.transition = "none";
-    track.style.transform = `translateX(${-cur * 100}%)`;
-    if (instant) { track.offsetHeight; track.style.transition = ""; }
-    pages.forEach((pg, k) => { pg.setAttribute("aria-hidden", k !== cur); if (k !== cur) pg.classList.remove("active"); });
-    playBars(pages[cur]);
-    pages[cur].scrollTop = 0;
-    $("#counter").textContent = `${cur + 1} / ${N}`;
-    $("#progressBar").style.width = `${((cur + 1) / N) * 100}%`;
-    $("#prevBtn").disabled = cur === 0;
-    $("#nextBtn").disabled = cur === N - 1;
-    const sec = 페이지[cur].섹션;
-    document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.sec === sec));
-    document.querySelectorAll(".toc-item").forEach((t) => t.classList.toggle("on", +t.dataset.go === cur));
-    const on = document.querySelector(".tab.on");
-    if (on) on.scrollIntoView({ block: "nearest", inline: "nearest" });
-    history.replaceState(null, "", `#${cur + 1}`);
+    i = Math.max(0, Math.min(N - 1, i));
+    pages[i].scrollIntoView({ behavior: instant ? "auto" : "smooth", block: "start" });
   }
 
-  $("#prevBtn").onclick = () => go(cur - 1);
-  const next = () => (waiting(pages[cur]) ? reveal(pages[cur]) : go(cur + 1));
-  $("#nextBtn").onclick = next;
+  /* 스크롤 위치에 맞춰 메뉴·진행 막대 표시 */
+  function spy() {
+    const line = $(".topbar").offsetHeight + 80;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    let c = 0;
+    pages.forEach((pg, k) => { if (pg.getBoundingClientRect().top <= line) c = k; });
+    if (scrollY >= max - 2) c = N - 1;
+    $("#progressBar").style.width = `${max > 0 ? Math.min(100, (scrollY / max) * 100) : 100}%`;
+    if (c === cur && curSec) return;
+    cur = c;
+    document.querySelectorAll(".toc-item").forEach((t) => t.classList.toggle("on", +t.dataset.go === cur));
+    const sec = 페이지[cur].섹션;
+    if (sec !== curSec) {
+      curSec = sec;
+      document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.sec === sec));
+      const tabs = $("#tabs"), on = tabs.querySelector(".tab.on");
+      if (on) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
+    }
+    clearTimeout(hashTimer);
+    hashTimer = setTimeout(() => history.replaceState(null, "", `#${cur + 1}`), 200);
+  }
+  let spyQueued = false;
+  const queueSpy = () => {
+    if (spyQueued) return;
+    spyQueued = true;
+    requestAnimationFrame(() => { spyQueued = false; spy(); });
+  };
+  window.addEventListener("scroll", queueSpy, { passive: true });
+
+  const next = () => {
+    const w = waitingInView();
+    if (w) reveal(w); else go(cur + 1);
+  };
   $("#homeBtn").onclick = () => go(0);
 
   const toc = $("#toc");
@@ -187,43 +197,28 @@
 
   document.addEventListener("click", (e) => {
     const g = e.target.closest("[data-go]");
-    if (g) { go(+g.dataset.go); toc.hidden = true; return; }
+    if (g) { toc.hidden = true; go(+g.dataset.go); return; }
     const s = e.target.closest("[data-sec]");
     if (s) { go(firstOf[s.dataset.sec]); return; }
-    if (e.target.closest("[data-reveal], .bars.hold") && waiting(pages[cur])) { reveal(pages[cur]); return; }
+    const h = e.target.closest("[data-reveal], .bars.hold");
+    if (h && waiting(h.closest(".page"))) { reveal(h.closest(".page")); return; }
     const c = e.target.closest(".copy");
     if (c) copy(prompts[+c.dataset.p], c);
   });
 
+  /* 키보드·발표 리모컨: → 다음 내용, ← 이전 내용 (↑ ↓ 는 일반 스크롤) */
   document.addEventListener("keydown", (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.target.closest("input, textarea")) return;
     if (e.key === "Escape") { toc.hidden = true; return; }
     if (!toc.hidden) return;
-    if (["ArrowRight", "PageDown"].includes(e.key) || (e.key === " " && !e.shiftKey)) { e.preventDefault(); next(); }
-    else if (["ArrowLeft", "PageUp"].includes(e.key) || (e.key === " " && e.shiftKey)) { e.preventDefault(); go(cur - 1); }
-    else if (e.key === "Home") go(0);
-    else if (e.key === "End") go(N - 1);
+    if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); next(); }
+    else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    else if (e.key === " " && !e.target.closest("button, a")) {
+      const w = waitingInView();
+      if (w) { e.preventDefault(); reveal(w); }
+    }
   });
-
-  /* 화면 밀기 (터치) */
-  let tx = 0, ty = 0;
-  const vp = $("#viewport");
-  vp.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
-  vp.addEventListener("touchend", (e) => {
-    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) (dx < 0 ? next() : go(cur - 1));
-  });
-
-  /* 트랙패드 좌우 밀기 */
-  let wheelLock = 0;
-  vp.addEventListener("wheel", (e) => {
-    if (Math.abs(e.deltaX) < 30 || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
-    e.preventDefault();
-    const now = Date.now();
-    if (now < wheelLock) return;
-    wheelLock = now + 700;
-    e.deltaX > 0 ? next() : go(cur - 1);
-  }, { passive: false });
 
   /* ---------- 복사 ---------- */
   function copy(text, btn) {
@@ -244,14 +239,16 @@
   }
 
   /* ---------- 시작 ---------- */
-  const start = parseInt(location.hash.slice(1), 10);
-  go(Number.isFinite(start) ? start - 1 : 0, true);
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  const hashPage = () => parseInt(location.hash.slice(1), 10);
+  const start = hashPage();
+  const toStart = () => { if (Number.isFinite(start) && start > 1) go(start - 1, true); };
+  toStart();
+  spy();
+  if (document.fonts) document.fonts.ready.then(() => { if (cur === start - 1) toStart(); });
   window.addEventListener("hashchange", () => {
-    const n = parseInt(location.hash.slice(1), 10);
+    const n = hashPage();
     if (Number.isFinite(n) && n - 1 !== cur) go(n - 1, true);
   });
-  fitAll();
-  if (document.fonts) document.fonts.ready.then(fitAll);
-  let rt;
-  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { fitAll(); go(cur, true); }, 120); });
+  window.addEventListener("resize", queueSpy);
 })();

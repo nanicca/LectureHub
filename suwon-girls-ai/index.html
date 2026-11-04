@@ -21,20 +21,10 @@
     <button class="brand" id="homeBtn" type="button" aria-label="첫 화면으로"></button>
     <nav class="tabs" id="tabs" aria-label="파트 이동"></nav>
     <button class="toc-btn" id="tocBtn" type="button" aria-label="전체 목차">☰ <span>목차</span></button>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
   </header>
 
-  <main class="viewport" id="viewport">
-    <div class="track" id="track"></div>
-  </main>
-
-  <footer class="bottombar">
-    <button class="nav-btn" id="prevBtn" type="button" aria-label="이전 페이지">‹ 이전</button>
-    <div class="progress-wrap">
-      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-      <div class="counter" id="counter"></div>
-    </div>
-    <button class="nav-btn next" id="nextBtn" type="button" aria-label="다음 페이지">다음 ›</button>
-  </footer>
+  <main id="track"></main>
 
   <div class="toc" id="toc" hidden>
     <div class="toc-panel" role="dialog" aria-label="전체 목차">
