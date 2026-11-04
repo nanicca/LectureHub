@@ -1,5 +1,5 @@
 /* =========================================================================
- *  app.js  —  화면 그리기 + 세로 스크롤 메뉴 + 프롬프트 복사 (수정 불필요)
+ *  app.js  —  화면 그리기 + 파트별 페이지 이동 + 프롬프트 복사 (수정 불필요)
  *  내용은 data.js에서만 고치세요.
  * ========================================================================= */
 
@@ -75,7 +75,7 @@
           ${강의.강사소개 ? `<a class="lbtn ghost" href="${esc(강의.강사소개)}" target="_blank" rel="noopener">👩‍🏫 강사 소개 ↗</a>` : ""}
           <button class="lbtn ghost" type="button" data-go="1">시작하기 ↓</button>
         </div>
-        <p class="hint">아래로 스크롤해서 보세요 · 오른쪽 위 ☰ 목차</p>
+        <p class="hint">아래로 스크롤해서 보세요 · 다른 파트는 위쪽 메뉴에서 고르세요</p>
       </div></section>`;
     }
     if (p.유형 === "구분") {
@@ -94,8 +94,18 @@
 
   /* ---------- 화면 구성 ---------- */
   const track = $("#track");
-  track.innerHTML = 페이지.map(pageHTML).join("");
-  const pages = [...track.children];
+  const parts = 섹션.filter((s) => 페이지.some((p) => p.섹션 === s.id));
+  const partNav = (k) => {
+    const prev = parts[k - 1], nxt = parts[k + 1];
+    return `<nav class="part-nav" aria-label="파트 넘기기">
+      ${prev ? `<button class="pn" type="button" data-sec="${prev.id}">‹ 이전 파트 · ${esc(prev.이름)}</button>` : "<span></span>"}
+      ${nxt ? `<button class="pn next" type="button" data-sec="${nxt.id}">다음 파트 · ${esc(nxt.이름)} ›</button>` : ""}
+    </nav>`;
+  };
+  track.innerHTML = parts.map((s, k) => `<div class="part" data-part="${s.id}" hidden>
+    ${페이지.map((p, i) => (p.섹션 === s.id ? pageHTML(p).replace("<section ", `<section data-i="${i}" `) : "")).join("")}
+    ${partNav(k)}</div>`).join("");
+  const pages = 페이지.map((_, i) => track.querySelector(`[data-i="${i}"]`));
   const N = pages.length;
   $("#homeBtn").innerHTML = `${강의.로고 ? `<img src="${esc(강의.로고)}" alt="">` : ""}<span>${esc(강의.제목)}</span>`;
   document.title = `${강의.제목} · ${강의.기관}`;
@@ -149,30 +159,36 @@
   });
 
   /* ---------- 이동 ---------- */
-  let cur = 0, curSec = null, hashTimer;
+  let cur = -1, curSec = null, hashTimer;
+  function showPart(sec) {
+    curSec = sec;
+    document.querySelectorAll(".part").forEach((el) => (el.hidden = el.dataset.part !== sec));
+    document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.sec === sec));
+    const tabs = $("#tabs"), on = tabs.querySelector(".tab.on");
+    if (on) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
+  }
   function go(i, instant) {
     i = Math.max(0, Math.min(N - 1, i));
-    pages[i].scrollIntoView({ behavior: instant ? "auto" : "smooth", block: "start" });
+    const sec = 페이지[i].섹션, moved = sec !== curSec;
+    if (moved) showPart(sec);
+    const behavior = instant || moved ? "auto" : "smooth";
+    if (i === firstOf[sec]) window.scrollTo({ top: 0, behavior });
+    else pages[i].scrollIntoView({ behavior, block: "start" });
+    spy();
   }
 
   /* 스크롤 위치에 맞춰 메뉴·진행 막대 표시 */
   function spy() {
     const line = $(".topbar").offsetHeight + 80;
     const max = document.documentElement.scrollHeight - innerHeight;
-    let c = 0;
-    pages.forEach((pg, k) => { if (pg.getBoundingClientRect().top <= line) c = k; });
-    if (scrollY >= max - 2) c = N - 1;
+    const mine = pages.map((pg, k) => k).filter((k) => 페이지[k].섹션 === curSec);
+    let c = mine[0];
+    mine.forEach((k) => { if (pages[k].getBoundingClientRect().top <= line) c = k; });
+    if (max > 0 && scrollY >= max - 2) c = mine[mine.length - 1];
     $("#progressBar").style.width = `${max > 0 ? Math.min(100, (scrollY / max) * 100) : 100}%`;
-    if (c === cur && curSec) return;
+    if (c === cur) return;
     cur = c;
     document.querySelectorAll(".toc-item").forEach((t) => t.classList.toggle("on", +t.dataset.go === cur));
-    const sec = 페이지[cur].섹션;
-    if (sec !== curSec) {
-      curSec = sec;
-      document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.sec === sec));
-      const tabs = $("#tabs"), on = tabs.querySelector(".tab.on");
-      if (on) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
-    }
     clearTimeout(hashTimer);
     hashTimer = setTimeout(() => history.replaceState(null, "", `#${cur + 1}`), 200);
   }
@@ -242,10 +258,9 @@
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   const hashPage = () => parseInt(location.hash.slice(1), 10);
   const start = hashPage();
-  const toStart = () => { if (Number.isFinite(start) && start > 1) go(start - 1, true); };
-  toStart();
-  spy();
-  if (document.fonts) document.fonts.ready.then(() => { if (cur === start - 1) toStart(); });
+  const first = Number.isFinite(start) ? start - 1 : 0;
+  go(first, true);
+  if (document.fonts) document.fonts.ready.then(() => { if (cur === first) go(first, true); });
   window.addEventListener("hashchange", () => {
     const n = hashPage();
     if (Number.isFinite(n) && n - 1 !== cur) go(n - 1, true);
