@@ -96,6 +96,12 @@ const 강의정보 = {
       링크: "https://chatgpt.com",
       설명: "분석 코드를 시키는 AI 도구",
       버튼: "바로가기"
+    },
+    {
+      이름: "NotebookLM 슬라이드 스타일북 132",
+      링크: "https://claude.ai/public/artifacts/707b1ea7-7dcf-4ed5-891c-04652c944d81",
+      설명: "슬라이드 스타일 132종과 복사용 프롬프트 모음",
+      버튼: "바로가기"
     }
   ],
 
