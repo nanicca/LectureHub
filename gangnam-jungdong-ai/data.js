@@ -56,7 +56,7 @@ const 강의정보 = {
       링크: 파일.버스데이터,
       설명: "강남구 버스 정류장 시간대별 승하차 인원 (2025년 4~6월) · 약 8.5MB",
     },
-    { 이름: "강남구 공공데이터", 링크: "https://sog.gangnam.go.kr/gncitizen/main", 설명: "데이터 포털 · 강남구 공공데이터", 버튼: "열기" },
+    { 이름: "강남 데이터 플랫폼", 링크: "https://sog.gangnam.go.kr/gncitizen/main", 설명: "데이터 포털 · 강남구 데이터 플랫폼", 버튼: "열기" },
     { 이름: "서울 열린데이터광장", 링크: "https://data.seoul.go.kr/", 설명: "데이터 포털 · 버스 승하차 인원 데이터 출처", 버튼: "열기" },
     { 이름: "공공데이터포털", 링크: "https://www.data.go.kr/", 설명: "데이터 포털 · 전국 공공데이터", 버튼: "열기" },
     { 이름: "Gemini 바로가기", 링크: "https://gemini.google.com", 설명: "5·6차시 실습 · 학교 계정 그대로", 버튼: "열기" },
@@ -119,7 +119,7 @@ const 강의정보 = {
           type: "링크",
           제목: "데이터 포털 사이트 바로가기",
           링크들: [
-            { 이름: "강남구 공공데이터", 주소: "https://sog.gangnam.go.kr/gncitizen/main" },
+            { 이름: "강남 데이터 플랫폼", 주소: "https://sog.gangnam.go.kr/gncitizen/main" },
             { 이름: "서울 열린데이터광장", 주소: "https://data.seoul.go.kr/" },
             { 이름: "공공데이터포털", 주소: "https://www.data.go.kr/" },
           ],
