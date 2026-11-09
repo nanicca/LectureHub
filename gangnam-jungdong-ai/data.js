@@ -17,6 +17,7 @@
 
 const 패들렛 = "https://padlet.com/nanicca00/2026-3-3-s0259p3xl3qnr1gx2w4y";
 const 시연 = "https://claude.ai/artifact/GCU8RZ4j3RtMmRwvpLh2f7";
+const 멈춰챌린지 = "https://taupe-crostata-e8cc58.netlify.app/";
 const 설문 ="https://docs.google.com/forms/d/e/1FAIpQLSfK_Fqw-_uXVIB82nD7m_ZMXt6Ee0MihQjFScUeezd26UH4IQ/viewform";
 
 /* 실습 파일 주소 (files 폴더 안) */
@@ -60,6 +61,7 @@ const 강의정보 = {
     { 이름: "서울 열린데이터광장", 링크: "https://data.seoul.go.kr/", 설명: "데이터 포털 · 버스 승하차 인원 데이터 출처", 버튼: "열기" },
     { 이름: "공공데이터포털", 링크: "https://www.data.go.kr/", 설명: "데이터 포털 · 전국 공공데이터", 버튼: "열기" },
     { 이름: "Gemini 바로가기", 링크: "https://gemini.google.com", 설명: "5·6차시 실습 · 학교 계정 그대로", 버튼: "열기" },
+    { 이름: "⏱️ 0.1초 멈춰 챌린지", 링크: 멈춰챌린지, 설명: "바이브 코딩으로 만든 게임 · 7·8차시", 버튼: "열기" },
     { 이름: "Lovable 바로가기", 링크: "https://lovable.dev", 설명: "7·8차시 실습 · 우리 조 계정으로 로그인", 버튼: "열기" },
     { 이름: "Blooket 퀴즈", 링크: "https://play.blooket.com", 설명: "선생님 화면의 게임 코드를 입력해요", 버튼: "열기" },
   ],
@@ -381,6 +383,12 @@ const 강의정보 = {
             { 제목: "수정 요청", 설명: "한 번에 하나씩 고치기" },
           ],
           포인트: "원하는 결과가 나올 때까지 반복! 한 번에 완벽하지 않아도 괜찮아요.",
+        },
+        {
+          type: "링크",
+          제목: "⏱️ 0.1초 멈춰 챌린지",
+          설명: "바이브 코딩으로 만든 게임이에요. 목표 시간에 딱 맞춰 '멈춰!' 버튼을 눌러 보세요.",
+          링크들: [{ 이름: "0.1초 멈춰 챌린지 열기", 주소: 멈춰챌린지 }],
         },
         {
           type: "체크리스트",
