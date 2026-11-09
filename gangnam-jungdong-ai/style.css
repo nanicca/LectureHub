@@ -535,3 +535,7 @@ td { word-break: keep-all; }
 .flow .node.first { border-color: var(--neon); }
 .instructor { position: relative; z-index: 2; }
 .instructor .box { box-shadow: var(--shadow), 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 20px rgba(34, 211, 238, 0.14); }
+
+/* 중동중학교 로고 옆 학교 이름 */
+.hero .school-name { font-weight: 800; font-size: 17px; color: #1f4fbf; letter-spacing: -0.01em; }
+@media (max-width: 560px) { .hero .school-name { font-size: 14px; } }
