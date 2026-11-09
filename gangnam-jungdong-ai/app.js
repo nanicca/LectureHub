@@ -126,7 +126,7 @@ function renderSection(s, i) {
     html += `<div class="flow">${s.단계
       .map(
         (st, k) => `${k ? '<span class="arrow">▶</span>' : ""}
-        <div class="node${k === 0 ? " first" : ""}">
+        <div class="node${k === (s.강조 ? s.강조 - 1 : 0) ? " first" : ""}">
           <div class="ntitle">${esc(st.제목)}</div>
           ${st.설명 ? `<div class="ndesc">${esc(st.설명)}</div>` : ""}
         </div>`
