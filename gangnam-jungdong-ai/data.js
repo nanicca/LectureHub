@@ -16,7 +16,8 @@
  * ========================================================================= */
 
 const 패들렛 = "https://padlet.com/nanicca00/2026-3-3-s0259p3xl3qnr1gx2w4y";
-const 설문 = "https://docs.google.com/forms/d/e/1FAIpQLSfK_Fqw-_uXVIB82nD7m_ZMXt6Ee0MihQjFScUeezd26UH4IQ/viewform";
+const 시연 = "https://claude.ai/artifact/GCU8RZ4j3RtMmRwvpLh2f7";
+const 설문 ="https://docs.google.com/forms/d/e/1FAIpQLSfK_Fqw-_uXVIB82nD7m_ZMXt6Ee0MihQjFScUeezd26UH4IQ/viewform";
 
 /* 실습 파일 주소 (files 폴더 안) */
 const 파일 = {
@@ -44,6 +45,12 @@ const 강의정보 = {
       이미지: "padlet-qr.png",
     },
     {
+      이름: "🚌 버스 혼잡도 예측 서비스 (완성품 시연)",
+      링크: 시연,
+      설명: "선생님이 미리 만든 완성 서비스 · 정류장과 시간대를 고르면 여유·보통·혼잡이 나와요",
+      버튼: "열기",
+    },
+    {
       이름: "실습 데이터 bus_merged.csv",
       링크: 파일.버스데이터,
       설명: "강남구 버스 정류장 시간대별 승하차 인원 (2025년 4~6월) · 약 8.5MB",
@@ -67,6 +74,13 @@ const 강의정보 = {
         "혼잡도 기준 A·B·C를 비교해 우리 조의 기준을 정한다",
       ],
       섹션: [
+        {
+          type: "링크",
+          제목: "완성품부터 먼저 볼까요? 🚌",
+          설명: "선생님이 미리 만든 버스 혼잡도 예측 서비스를 함께 써 봐요. 정류장과 시간대를 고르면 여유 · 보통 · 혼잡이 나와요.",
+          링크들: [{ 이름: "버스 혼잡도 예측 서비스 열기", 주소: 시연 }],
+          포인트: "이걸 만들려면 무엇이 필요했을까? 오늘부터 함께 찾아봐요!",
+        },
         {
           type: "흐름",
           제목: "데이터 서비스 만들기 6단계 지도",
