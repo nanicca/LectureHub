@@ -20,6 +20,7 @@ const 시연 = "https://claude.ai/artifact/GCU8RZ4j3RtMmRwvpLh2f7";
 const 퀴즈 = "https://data-sort-game.onrender.com/";
 const 멈춰챌린지 ="https://taupe-crostata-e8cc58.netlify.app/";
 const 설문 ="https://docs.google.com/forms/d/e/1FAIpQLSfK_Fqw-_uXVIB82nD7m_ZMXt6Ee0MihQjFScUeezd26UH4IQ/viewform";
+const 사후설문 = "https://forms.gle/LK9UJfsxojPd7f4U6";
 
 /* 실습 파일 주소 (files 폴더 안) */
 const 파일 = {
@@ -47,6 +48,7 @@ const 강의정보 = {
 
   자료: [
     { 이름: "📝 수업 전 설문", 링크: 설문, 설명: "수업을 시작하기 전에 먼저 참여해 주세요", 버튼: "참여하기" },
+    { 이름: "✅ 수업 후 설문", 링크: 사후설문, 설명: "모든 수업을 마친 뒤 참여해 주세요", 버튼: "참여하기" },
     {
       이름: "패들렛",
       링크: 패들렛,
