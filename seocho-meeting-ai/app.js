@@ -68,7 +68,9 @@ function renderIndex() {
             <div class="name">${esc(f.이름)}</div>
             <div class="desc">${esc(f.설명 || "")}</div>
           </div>
-          ${f.잠금
+          ${f.복사 && !f.잠금
+            ? `<button class="btn copy-code" data-copy="${encodeURIComponent(f.복사)}">📋 ${esc(f.버튼 || "복사")}</button>`
+            : f.잠금
             ? `<span class="btn locked">🔒 ${esc(f.잠금문구 || "준비 중")}</span>`
             : isExternal(f.링크)
               ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>`
@@ -78,7 +80,32 @@ function renderIndex() {
         </div>`;
       })
       .join("");
+    bindCopy(filesEl.querySelectorAll(".copy-code"));
   }
+}
+
+// 복사 버튼 공통 동작 (자료의 '복사' 항목)
+function bindCopy(btns) {
+  btns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const text = decodeURIComponent(btn.dataset.copy);
+      const done = () => {
+        const old = btn.textContent;
+        btn.textContent = "✓ 복사됨";
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      };
+      const fallback = () => {
+        const ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); ta.remove(); done();
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
 }
 
 /* ---------- 섹션 렌더 도우미 ---------- */
