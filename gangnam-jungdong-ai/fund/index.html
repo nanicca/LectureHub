@@ -423,7 +423,13 @@ function bulkImport(cat, btn) {
 function adminShow(d) {
   var sc = d.settings.screen;
   var b = function (key, label) { return '<button class="btn ' + (sc === key ? "primary" : "") + '" style="flex:1;min-width:160px;padding:18px" onclick="act(\'setScreen\',{screen:\'' + key + '\'},this)">' + label + (sc === key ? " ✓" : "") + "</button>"; };
-  return '<div class="card"><h2>🏆 결과 발표</h2><p class="muted">버튼을 누르면 프로젝터의 결과 발표 화면이 바로 바뀌어요. 같은 버튼을 다시 누르면 처음부터 다시 시작해요.</p>' +
+  var ord = d.order || [];
+  var orderCard = '<div class="card"><div class="row" style="justify-content:space-between"><h2>🎲 개인 프로젝트 발표 순서</h2><div class="row">' +
+    '<button class="btn primary" onclick="act(\'drawOrder\',{},this' + (ord.length ? ',\'발표 순서를 새로 뽑을까요? 지금 순서는 사라져요.\'' : '') + ')">🎲 랜덤으로 뽑기</button>' +
+    (ord.length ? '<button class="btn ' + (sc === "order" ? "dark" : "") + '" onclick="act(\'setScreen\',{screen:\'order\'},this)">📽 발표 화면에 띄우기' + (sc === "order" ? " ✓" : "") + '</button>' : '') + '</div></div>' +
+    '<p class="muted">패들렛 「개인프로젝트 최종」에 올라온 ' + d.projects.filter(function (p) { return p.cat === "personal"; }).length + '개 작품으로 순서를 뽑아요. 뽑으면 발표 화면에 바로 하나씩 나타나요.</p>' +
+    (ord.length ? '<ol style="margin:8px 0 0;padding-left:28px;line-height:1.9;font-size:16px">' + ord.map(function (p) { return "<li><b>" + esc(p.author || p.title) + "</b> " + (p.owner ? '<span class="muted">' + esc(p.owner) + "</span>" : "") + "</li>"; }).join("") + "</ol>" : "") + "</div>";
+  return orderCard + '<div class="card"><h2>🏆 결과 발표</h2><p class="muted">버튼을 누르면 프로젝터의 결과 발표 화면이 바로 바뀌어요. 같은 버튼을 다시 누르면 처음부터 다시 시작해요.</p>' +
     '<div class="row" style="margin:14px 0">' + b("wait", "⏳ 대기 화면") + b("team", "👥 팀 프로젝트 결과") + b("personal", "🙋 개인 프로젝트 결과") + "</div>" +
     '<p class="muted">발표 화면에서 <b>클릭 또는 스페이스바</b>를 누를 때마다 3위 → 2위 → 1위 → 시상대 → 전체 순위가 하나씩 공개돼요. 투표를 마감하면 그 결과 화면이 자동으로 열려요.</p></div>' +
     '<div class="card"><h2>🔗 주소</h2><p><b>학생용</b><br><a href="' + esc(BASE) + '" target="_blank">' + esc(BASE) + '</a></p><p><b>결과 발표 화면 (프로젝터)</b><br><a href="' + esc(BASE + "?page=share") + '" target="_blank">' + esc(BASE + "?page=share") + "</a></p></div>";
@@ -447,7 +453,7 @@ function pollShare() {
     var changed = !V.data || d.screen !== V.data.screen || d.screenSeq !== V.seq;
     var prevVer = V.data && V.data.ver;
     V.data = d;
-    if (changed) { V.seq = d.screenSeq; V.step = 0; renderShare(false); }
+    if (changed) { V.seq = d.screenSeq; V.step = 0; renderShare(d.screen === "order" ? true : false); }
     else if (d.screen === "wait" && d.ver !== prevVer) renderShare(false);
   }).catch(function () {});
 }
@@ -476,6 +482,21 @@ function renderShare(animate) {
     st.innerHTML = '<h1>💰 가상 펀딩 투표</h1><div class="sub">점수 대신 투자금으로 뽑는 최고의 프로젝트</div><div class="prog">' + ["team", "personal"].map(function (c) {
       return '<div class="box"><div style="font-size:clamp(16px,2vw,26px);font-weight:800">' + CAT_ICON[c] + " " + CAT_NAME[c] + '</div><div class="n">' + d.counts[c].done + " / " + d.counts[c].total + '</div><div style="color:#C9D0EA">' + STATUS_NAME[d.status[c]] + "</div></div>";
     }).join("") + '</div><div class="hint">결과 발표는 관리자 화면에서 시작해요</div>';
+    return;
+  }
+  if (d.screen === "order") {
+    var ord = d.order || [];
+    var cols = ord.length > 10 ? 2 : 1;
+    st.innerHTML = '<h1 style="font-size:clamp(28px,4.5vw,64px)">🎲 개인 프로젝트 발표 순서</h1><div style="display:grid;grid-template-columns:repeat(' + cols + ',minmax(0,1fr));gap:1.2vh 3vw;width:100%;max-width:1300px;text-align:left">' +
+      ord.map(function (p, i) {
+        return '<div class="reveal" style="animation-delay:' + (i * 0.35) + 's;display:flex;align-items:center;gap:1.5vw;background:rgba(255,255,255,.08);border-radius:14px;padding:1.2vh 1.5vw;font-size:clamp(18px,2.4vw,34px);font-weight:800">' +
+          '<span style="color:var(--yellow);min-width:2.2em">' + (i + 1) + '번</span><span>' + esc(p.author || p.title) + '</span>' + (p.owner ? '<span style="color:#8C97C4;font-size:.6em;font-weight:600">' + esc(p.owner) + "</span>" : "") + "</div>";
+      }).join("") + "</div>";
+    if (animate !== false && V.orderSeq !== d.screenSeq) {
+      V.orderSeq = d.screenSeq;
+      ord.forEach(function (_, i) { tone(520 + i * 25, i * 0.35, 0.18, "triangle", 0.15); });
+      setTimeout(function () { confetti(120); }, ord.length * 350 + 200);
+    }
     return;
   }
   var cat = d.screen, steps = revealSteps(), s = steps[Math.min(V.step, steps.length - 1)];
