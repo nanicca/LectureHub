@@ -21,7 +21,7 @@ const 퀴즈 = "https://data-sort-game.onrender.com/";
 const 멈춰챌린지 ="https://taupe-crostata-e8cc58.netlify.app/";
 const 설문 ="https://docs.google.com/forms/d/e/1FAIpQLSfK_Fqw-_uXVIB82nD7m_ZMXt6Ee0MihQjFScUeezd26UH4IQ/viewform";
 const 사후설문 = "https://forms.gle/LK9UJfsxojPd7f4U6";
-const 펀딩앱 = "https://script.google.com/macros/s/AKfycbzIIeuHZ19sEP6qNY_884aVbPdrVlVM5jaxRWgqSNdxKsaefraI_SYBeoBe930pQX2f/exec";
+const 펀딩앱 = "https://nanicca.github.io/LectureHub/gangnam-jungdong-ai/fund/";
 
 /* 실습 파일 주소 (files 폴더 안) */
 const 파일 = {

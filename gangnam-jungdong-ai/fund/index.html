@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가상 펀딩 투표</title>
+<style>
+:root{--navy:#101A3C;--navy2:#1E2A57;--yellow:#F5B52E;--bg:#F4F6FB;--card:#fff;--text:#1B2340;--muted:#5B6585;--blue:#2F5BEA;--lblue:#E3EAFE;--lyellow:#FFF3D6;--green:#16A34A;--lgreen:#DCF5E5;--red:#DC2645;--line:#E2E6F0}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:16px 16px 120px}
+.top{background:var(--navy);color:#fff;padding:18px 16px}
+.top .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-size:20px;margin:0;flex:1;min-width:0;white-space:nowrap;word-break:keep-all}
+.top .who{font-size:14px;color:#C9D0EA}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:var(--lblue);color:var(--navy)}
+.btn.primary{background:var(--yellow);color:var(--navy)}
+.btn.dark{background:var(--navy);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.red{background:var(--red);color:#fff}
+.btn.ghost{background:transparent;color:#C9D0EA;border:1px solid #3A4675;padding:8px 12px;font-size:13px}
+.btn.sm{padding:7px 10px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.card{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(27,35,64,.06);margin-bottom:14px}
+.center{text-align:center}
+h2{font-size:22px;margin:4px 0 6px}
+.muted{color:var(--muted);font-size:14px}
+label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
+input[type=text],input[type=password],input[type=tel],select,textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:16px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+.err{color:var(--red);font-weight:700;font-size:14px;min-height:20px;margin-top:10px}
+.tabs{display:flex;gap:8px;margin:14px 0}
+.tab{flex:1;padding:12px;border-radius:12px;border:0;background:#fff;font-weight:700;color:var(--muted);cursor:pointer;box-shadow:0 1px 4px rgba(27,35,64,.06)}
+.tab.on{background:var(--navy);color:#fff}
+.pill{display:inline-block;padding:4px 10px;border-radius:99px;font-size:13px;font-weight:700}
+.pill.ready{background:#EEF0F5;color:var(--muted)}.pill.open{background:var(--lgreen);color:#15803D}.pill.closed{background:#FDE2E6;color:var(--red)}
+.pill.pending{background:var(--lyellow);color:#9A6B00}.pill.approved{background:var(--lgreen);color:#15803D}
+.banner{border-radius:14px;padding:14px 16px;font-weight:700;margin-bottom:14px}
+.banner.ready{background:#EEF0F5;color:var(--muted)}.banner.open{background:var(--lgreen);color:#15803D}.banner.closed{background:#FDE2E6;color:var(--red)}
+.proj{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.proj .t{font-weight:800;font-size:17px;word-break:keep-all}
+.proj .s{font-size:13px;color:var(--muted);margin-top:2px}
+.proj a{font-size:13px;color:var(--blue);font-weight:700;text-decoration:none}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:40px;height:40px;border-radius:10px;border:0;background:var(--lblue);color:var(--navy);font-size:22px;font-weight:800;cursor:pointer}
+.stepper button:disabled{opacity:.35}
+.stepper .amt{min-width:76px;text-align:center;font-weight:800;font-size:17px;color:#B7791F}
+.proj.picked{outline:2.5px solid var(--yellow)}
+.proj.blocked{opacity:.55}
+.badge{display:inline-block;background:#EEF0F5;color:var(--muted);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700}
+.reason{grid-column:1/-1}
+.reason input{font-size:15px;padding:10px 12px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -4px 16px rgba(27,35,64,.1);padding:12px 16px}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .sum{flex:1;font-weight:800;font-size:15px}
+.bar .sum small{display:block;font-weight:600;color:var(--muted);font-size:12.5px;margin-top:2px}
+.ok{color:var(--green)}.no{color:var(--red)}
+.big-emoji{font-size:54px;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{color:var(--muted);font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips span{display:inline-block;background:var(--lyellow);border-radius:8px;padding:4px 8px;margin:3px;font-size:13px}
+.tw{overflow-x:auto}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;z-index:99;box-shadow:0 6px 20px rgba(0,0,0,.2);max-width:90vw}
+/* ---------- 발표 화면 ---------- */
+body.share{background:radial-gradient(ellipse at top,#22306A 0%,#101A3C 60%,#0A1130 100%);color:#fff;min-height:100vh;overflow:hidden}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4vh 4vw;text-align:center;cursor:pointer;user-select:none}
+.stage h1{font-size:clamp(32px,6vw,84px);margin:0 0 2vh}
+.stage .sub{font-size:clamp(16px,2.4vw,32px);color:var(--yellow);font-weight:700}
+.stage .hint{position:fixed;bottom:3vh;left:0;right:0;font-size:clamp(12px,1.4vw,18px);color:#8C97C4}
+.prog{display:flex;gap:4vw;margin-top:5vh;flex-wrap:wrap;justify-content:center}
+.prog .box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:3vh 3vw;min-width:240px}
+.prog .n{font-size:clamp(36px,5vw,72px);font-weight:900;color:var(--yellow)}
+.reveal{animation:pop .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+.medal{font-size:clamp(70px,12vw,170px);line-height:1}
+.rk{font-size:clamp(28px,4vw,56px);font-weight:900;margin-top:1vh}
+.ptitle{font-size:clamp(34px,6vw,90px);font-weight:900;margin:1vh 0;word-break:keep-all}
+.pmeta{font-size:clamp(16px,2.2vw,30px);color:#C9D0EA}
+.pmoney{font-size:clamp(30px,5vw,72px);font-weight:900;color:var(--yellow);margin-top:1.5vh}
+.preasons{margin-top:2vh;display:flex;flex-direction:column;gap:1vh;align-items:center}
+.preasons span{background:rgba(255,255,255,.1);border-radius:99px;padding:.8vh 2vw;font-size:clamp(14px,1.8vw,24px)}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:2vw;width:100%;max-width:1400px}
+.pod{flex:1;max-width:30vw;display:flex;flex-direction:column;align-items:center}
+.pod .blk{width:100%;border-radius:16px 16px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:2vh;font-size:clamp(28px,4vw,60px);font-weight:900;color:var(--navy)}
+.pod .nm{font-size:clamp(18px,2.4vw,36px);font-weight:900;margin:1vh 0 .5vh;word-break:keep-all}
+.pod .mn{font-size:clamp(14px,1.8vw,26px);color:var(--yellow);font-weight:800;margin-bottom:1.5vh}
+.ranklist{width:100%;max-width:1100px;max-height:72vh;overflow:auto;text-align:left}
+.ranklist .r{display:grid;grid-template-columns:80px 1fr auto;gap:2vw;align-items:center;padding:1.4vh 2vw;border-bottom:1px solid rgba(255,255,255,.12);font-size:clamp(16px,2vw,28px)}
+.ranklist .r b{color:var(--yellow)}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media (max-width:520px){.top h1{font-size:17px}.top .who{order:3;width:100%;font-size:13px}.tab{font-size:14px;padding:11px 6px;word-break:keep-all}.bar .sum{font-size:14px}.bar .btn{padding:12px 12px;white-space:nowrap}.stepper button{width:36px;height:36px}.stepper .amt{min-width:64px;font-size:15px}.proj .t{font-size:16px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<canvas id="fx"></canvas>
+<script>
+var PAGE_RAW = "<?= page ?>";
+var BASE_RAW = "<?= baseUrl ?>";
+var ONLINE = typeof google !== "undefined" && google.script && google.script.run;
+var API_URL = "https://script.google.com/macros/s/AKfycbzIIeuHZ19sEP6qNY_884aVbPdrVlVM5jaxRWgqSNdxKsaefraI_SYBeoBe930pQX2f/exec";
+var REMOTE = !ONLINE && /github\.io$/.test(location.hostname);
+var PAGE = ONLINE ? PAGE_RAW : (new URLSearchParams(location.search).get("page") || "");
+var BASE = ONLINE ? BASE_RAW : location.origin + location.pathname;
+var BUDGET = 1000000, STEP = 100000, MAX_PICK = 3, TEAMS = 8;
+var CATS = ["personal", "team"], CAT_NAME = { personal: "개인 프로젝트", team: "팀 프로젝트" }, CAT_ICON = { personal: "🙋", team: "👥" };
+var STATUS_NAME = { ready: "시작 전", open: "투자 진행 중", closed: "마감" };
+
+/* ---------- 서버 호출 ---------- */
+var mockReady = null;
+function loadMock() {
+  if (mockReady) return mockReady;
+  mockReady = new Promise(function (res) {
+    var s = document.createElement("script");
+    s.src = "Core.js";
+    s.onload = function () {
+      window.HASH = function (str) { var h = 5381; for (var i = 0; i < str.length; i++) h = ((h * 33) ^ str.charCodeAt(i)) >>> 0; return "m" + h.toString(16); };
+      res();
+    };
+    document.head.appendChild(s);
+  });
+  return mockReady;
+}
+function api(fn, args) {
+  return new Promise(function (res, rej) {
+    function done(r) { if (r && r.error) rej(new Error(r.error)); else res(r); }
+    if (REMOTE) {
+      fetch(API_URL, { method: "POST", body: JSON.stringify({ fn: fn, args: args || {} }) })
+        .then(function (r) { return r.json(); }).then(done)
+        .catch(function () { rej(new Error("연결이 불안정해요. 잠시 후 다시 해 주세요.")); });
+      return;
+    }
+    if (ONLINE) { google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { rej(new Error("연결이 불안정해요. 잠시 후 다시 해 주세요.")); }).rpc(fn, args || {}); return; }
+    loadMock().then(function () {
+      setTimeout(function () {
+        var db; try { db = JSON.parse(localStorage.getItem("fund_mock_db")) || newDb(); } catch (e) { db = newDb(); }
+        var r = dispatch(db, fn, args || {});
+        if (WRITE_FNS.indexOf(fn) >= 0 && !(r && r.error)) localStorage.setItem("fund_mock_db", JSON.stringify(db));
+        done(JSON.parse(JSON.stringify(r)));
+      }, 120);
+    });
+  });
+}
+
+/* ---------- 도우미 ---------- */
+var $app = document.getElementById("app");
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function won(n) { n = Number(n) || 0; if (n === 0) return "0원"; if (n % 10000 === 0) return (n / 10000).toLocaleString() + "만 원"; return n.toLocaleString() + "원"; }
+function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k)); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
+var toastT;
+function toast(msg) { var t = document.querySelector(".toast"); if (!t) { t = document.createElement("div"); t.className = "toast"; document.body.appendChild(t); } t.textContent = msg; t.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(function () { t.style.display = "none"; }, 2600); }
+function busy(btn, on) { if (!btn) return; btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = "잠시만요…"; } else if (btn.dataset.t) btn.textContent = btn.dataset.t; }
+function typing() { var a = document.activeElement; return a && /INPUT|TEXTAREA|SELECT/.test(a.tagName); }
+function projSub(p) { return p.team ? p.team + "조" + (p.author ? " · " + p.author : "") : (p.author || ""); }
+
+/* =====================================================
+   학생 화면
+   ===================================================== */
+var S = { sess: store("fund_sess"), state: null, cat: "team", draft: { personal: null, team: null }, sig: "", authTab: "login" };
+
+function studentStart() {
+  if (S.sess) refreshStudent(true); else renderAuth();
+  setInterval(function () { if (S.sess && !document.hidden) refreshStudent(false); }, 5000);
+}
+function refreshStudent(force) {
+  api("myState", S.sess).then(function (st) {
+    S.state = st;
+    CATS.forEach(function (c) {
+      var cs = st.cats[c];
+      if (!S.draft[c] || cs.status !== "open" || force === "reset") {
+        var d = {};
+        cs.mine.forEach(function (m) { d[m.pid] = { amount: m.amount, reason: m.reason }; });
+        S.draft[c] = d;
+      }
+    });
+    var sig = JSON.stringify([st.me, CATS.map(function (c) { var x = st.cats[c]; return [x.status, x.submittedAt, x.projects]; })]);
+    if (force || sig !== S.sig) { S.sig = sig; if (!typing() || force) renderStudent(); else S.sig = ""; }
+  }).catch(function (e) {
+    if (/로그인/.test(e.message)) { store("fund_sess", null); S.sess = null; renderAuth(e.message); }
+  });
+}
+function topBar(title) {
+  var who = S.state ? S.state.me.team + "조 · " + S.state.me.sid + " · " + S.state.me.name : "";
+  return '<div class="top"><div class="in"><h1>💰 ' + esc(title) + '</h1>' + (who ? '<span class="who">' + esc(who) + '</span><button class="btn ghost" onclick="logout()">로그아웃</button>' : "") + "</div></div>";
+}
+function logout() { store("fund_sess", null); S.sess = null; S.state = null; S.sig = ""; S.draft = { personal: null, team: null }; renderAuth(); }
+
+function renderAuth(msg) {
+  var reg = S.authTab === "register";
+  var teamOpts = '<option value="">조를 골라 주세요</option>' + Array.from({ length: TEAMS }, function (_, i) { return '<option value="' + (i + 1) + '">' + (i + 1) + "조</option>"; }).join("");
+  $app.innerHTML = topBar("가상 펀딩 투표") + '<div class="wrap"><div class="card">' +
+    '<div class="center"><div class="big-emoji">💸</div><h2>점수 대신 투자금으로!</h2><p class="muted">개인 프로젝트 100만 원, 팀 프로젝트 100만 원을 투자해요</p></div>' +
+    '<div class="tabs"><button class="tab ' + (reg ? "" : "on") + '" onclick="S.authTab=\'login\';renderAuth()">로그인</button><button class="tab ' + (reg ? "on" : "") + '" onclick="S.authTab=\'register\';renderAuth()">처음이에요 (등록)</button></div>' +
+    (reg ? '<label>조</label><select id="f_team">' + teamOpts + "</select>" : "") +
+    '<label>학번</label><input id="f_sid" type="tel" inputmode="numeric" placeholder="예) 30301" autocomplete="username">' +
+    (reg ? '<label>이름</label><input id="f_name" type="text" placeholder="예) 김중동">' : "") +
+    '<label>비밀번호' + (reg ? " (4자리 이상, 내가 만들기)" : "") + '</label><input id="f_pw" type="password" autocomplete="' + (reg ? "new-password" : "current-password") + '">' +
+    (reg ? '<label>비밀번호 한 번 더</label><input id="f_pw2" type="password" autocomplete="new-password">' : "") +
+    '<div class="err" id="f_err">' + esc(msg || "") + '</div>' +
+    '<button class="btn primary" style="width:100%;margin-top:6px" id="f_go" onclick="' + (reg ? "doRegister(this)" : "doLogin(this)") + '">' + (reg ? "등록하기" : "로그인") + "</button>" +
+    (reg ? "" : '<p class="muted center" style="margin-top:14px">비밀번호를 잊었으면 선생님께 말해 주세요</p>') +
+    "</div></div>";
+  $app.querySelectorAll("input").forEach(function (i) { i.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("f_go").click(); }); });
+}
+function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; }
+function setErr(m) { var e = document.getElementById("f_err"); if (e) e.textContent = m; }
+function doRegister(btn) {
+  if (val("f_pw") !== val("f_pw2")) return setErr("비밀번호 두 개가 달라요.");
+  busy(btn, true);
+  api("register", { sid: val("f_sid"), name: val("f_name"), team: val("f_team"), pw: val("f_pw") }).then(function (r) {
+    S.sess = { sid: r.me.sid, token: r.token }; store("fund_sess", S.sess); refreshStudent(true);
+  }).catch(function (e) { busy(btn, false); setErr(e.message); });
+}
+function doLogin(btn) {
+  busy(btn, true);
+  api("login", { sid: val("f_sid"), pw: val("f_pw") }).then(function (r) {
+    S.sess = { sid: r.me.sid, token: r.token }; store("fund_sess", S.sess); refreshStudent(true);
+  }).catch(function (e) { busy(btn, false); setErr(e.message); });
+}
+function doNewPw(btn) {
+  if (val("f_pw") !== val("f_pw2")) return setErr("비밀번호 두 개가 달라요.");
+  busy(btn, true);
+  api("setPassword", Object.assign({ pw: val("f_pw") }, S.sess)).then(function () { toast("새 비밀번호를 만들었어요"); refreshStudent(true); })
+    .catch(function (e) { busy(btn, false); setErr(e.message); });
+}
+
+function renderStudent() {
+  var st = S.state, me = st.me;
+  if (me.mustChange) {
+    $app.innerHTML = topBar("새 비밀번호 만들기") + '<div class="wrap"><div class="card"><div class="center"><div class="big-emoji">🔑</div><h2>새 비밀번호를 만들어요</h2><p class="muted">선생님이 비밀번호를 초기화했어요</p></div>' +
+      '<label>새 비밀번호 (4자리 이상)</label><input id="f_pw" type="password"><label>한 번 더</label><input id="f_pw2" type="password"><div class="err" id="f_err"></div>' +
+      '<button class="btn primary" style="width:100%" onclick="doNewPw(this)">저장하기</button></div></div>';
+    return;
+  }
+  if (me.status !== "approved") {
+    $app.innerHTML = topBar("가상 펀딩 투표") + '<div class="wrap"><div class="card center"><div class="big-emoji">⏳</div><h2>선생님 승인을 기다리는 중</h2><p class="muted">승인되면 이 화면이 저절로 바뀌어요.<br>조를 잘못 골랐다면 선생님께 말해 주세요.</p><p style="font-weight:800;margin-top:16px">' + esc(me.team + "조 · " + me.sid + " · " + me.name) + "</p></div></div>";
+    return;
+  }
+  var cat = S.cat, cs = st.cats[cat];
+  var tabs = '<div class="tabs">' + ["team", "personal"].map(function (c) {
+    var x = st.cats[c], mark = x.submittedAt ? " ✅" : "";
+    return '<button class="tab ' + (c === cat ? "on" : "") + '" onclick="S.cat=\'' + c + '\';renderStudent()">' + CAT_ICON[c] + " " + CAT_NAME[c] + mark + "</button>";
+  }).join("") + "</div>";
+  var body = "";
+  if (cs.status === "ready") {
+    body = '<div class="banner ready">⚪ 아직 투자가 시작되지 않았어요. 발표를 보면서 기다려 주세요!</div>' + projectList(cs, false);
+  } else if (cs.status === "closed") {
+    body = '<div class="banner closed">🔴 투자가 마감됐어요. 결과 발표를 기다려 주세요!</div>' + myInvestSummary(cs);
+  } else {
+    body = '<div class="banner open">🟢 투자 진행 중! ' + (cs.submittedAt ? "제출 완료 — 마감 전까지 고칠 수 있어요" : "100만 원을 1~3곳에 나눠 투자해요") + "</div>" + projectList(cs, true);
+  }
+  $app.innerHTML = topBar("가상 펀딩 투표") + '<div class="wrap">' + tabs + body + "</div>" + (cs.status === "open" ? '<div class="bar"><div class="in" id="sumbar"></div></div>' : "");
+  if (cs.status === "open") updateBar();
+}
+function projectList(cs, editable) {
+  if (!cs.projects.length) return '<div class="card center muted">아직 프로젝트가 등록되지 않았어요</div>';
+  var d = S.draft[S.cat] || {};
+  return cs.projects.map(function (p) {
+    var cur = d[p.id] || { amount: 0, reason: "" };
+    var picked = cur.amount > 0;
+    var right = p.blocked ? '<span class="badge">' + esc(p.blocked) + "</span>" :
+      editable ? '<div class="stepper"><button onclick="step(\'' + p.id + '\',-1)" id="m_' + p.id + '">−</button><span class="amt" id="a_' + p.id + '">' + won(cur.amount) + '</span><button onclick="step(\'' + p.id + '\',1)" id="p_' + p.id + '">+</button></div>' : "";
+    return '<div class="card proj' + (picked && editable ? " picked" : "") + (p.blocked ? " blocked" : "") + '" id="c_' + p.id + '">' +
+      '<div><div class="t">' + esc(p.title) + '</div><div class="s">' + esc(projSub(p)) + "</div>" + (p.link ? '<a href="' + esc(p.link) + '" target="_blank" rel="noopener">작품 열어 보기 ↗</a>' : "") + "</div>" + right +
+      (editable && !p.blocked ? '<div class="reason" id="r_' + p.id + '" style="display:' + (picked ? "block" : "none") + '"><input type="text" maxlength="80" placeholder="💬 투자 이유 한 줄 (예: 그래프가 한눈에 보여요)" value="' + esc(cur.reason) + '" oninput="setReason(\'' + p.id + '\',this.value)"></div>' : "") +
+      "</div>";
+  }).join("");
+}
+function myInvestSummary(cs) {
+  if (!cs.mine.length) return '<div class="card center muted">제출한 투자가 없어요</div>';
+  var names = {}; cs.projects.forEach(function (p) { names[p.id] = p.title; });
+  return '<div class="card"><h2>내 투자</h2>' + cs.mine.map(function (m) {
+    return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b>' + esc(names[m.pid] || "삭제된 프로젝트") + '</b> <span style="color:#B7791F;font-weight:800">' + won(m.amount) + '</span><div class="muted">💬 ' + esc(m.reason) + "</div></div>";
+  }).join("") + "</div>";
+}
+function draftStats() {
+  var d = S.draft[S.cat] || {}, sum = 0, n = 0, missing = 0;
+  Object.keys(d).forEach(function (k) { if (d[k].amount > 0) { sum += d[k].amount; n++; if (!String(d[k].reason || "").trim()) missing++; } });
+  return { sum: sum, n: n, missing: missing };
+}
+function step(pid, dir) {
+  var d = S.draft[S.cat] || (S.draft[S.cat] = {});
+  var cur = d[pid] || (d[pid] = { amount: 0, reason: "" });
+  var s = draftStats();
+  if (dir > 0) {
+    if (s.sum + STEP > BUDGET) return toast("100만 원을 다 썼어요");
+    if (cur.amount === 0 && s.n >= MAX_PICK) return toast("최대 " + MAX_PICK + "곳까지 투자할 수 있어요");
+  }
+  cur.amount = Math.max(0, cur.amount + dir * STEP);
+  document.getElementById("a_" + pid).textContent = won(cur.amount);
+  document.getElementById("c_" + pid).classList.toggle("picked", cur.amount > 0);
+  var r = document.getElementById("r_" + pid);
+  if (r) { r.style.display = cur.amount > 0 ? "block" : "none"; if (cur.amount > 0 && dir > 0 && !cur.reason) r.querySelector("input").focus(); }
+  updateBar();
+}
+function setReason(pid, v) { var d = S.draft[S.cat]; if (d && d[pid]) d[pid].reason = v; updateBar(); }
+function updateBar() {
+  var el = document.getElementById("sumbar"); if (!el) return;
+  var s = draftStats(), left = BUDGET - s.sum;
+  var ok = left === 0 && s.n >= 1 && s.n <= MAX_PICK && s.missing === 0;
+  var hint = left > 0 ? '<span class="no">남은 금액 ' + won(left) + "</span>" : s.missing ? '<span class="no">이유를 ' + s.missing + "곳 더 써 주세요</span>" : '<span class="ok">✅ 제출할 수 있어요</span>';
+  el.innerHTML = '<div class="sum">' + won(s.sum).replace(" 원","") + " / 100만 원 · " + s.n + "곳<small>" + hint + '</small></div><button class="btn primary" ' + (ok ? "" : "disabled") + ' onclick="doSubmit(this)">💰 ' + (S.state.cats[S.cat].submittedAt ? "다시 제출" : "투자 제출") + "</button>";
+}
+function doSubmit(btn) {
+  var d = S.draft[S.cat], items = Object.keys(d).filter(function (k) { return d[k].amount > 0; }).map(function (k) { return { pid: k, amount: d[k].amount, reason: d[k].reason }; });
+  busy(btn, true);
+  api("submit", Object.assign({ cat: S.cat, items: items }, S.sess)).then(function () {
+    toast("🎉 " + CAT_NAME[S.cat] + " 투자를 제출했어요!"); refreshStudent(true);
+  }).catch(function (e) { busy(btn, false); toast(e.message); });
+}
+
+/* =====================================================
+   관리자 화면
+   ===================================================== */
+var A = { pw: store("fund_admin_pw_s") || "", tab: "vote", data: null, ver: -1 };
+function adminStart() {
+  api("adminInfo").then(function (r) {
+    if (!r.hasPw) return renderAdminLogin(true);
+    if (A.pw) refreshAdmin(true); else renderAdminLogin(false);
+  });
+  setInterval(function () { if (A.data && !document.hidden) refreshAdmin(false); }, 4000);
+}
+function renderAdminLogin(setup, msg) {
+  $app.innerHTML = '<div class="top"><div class="in"><h1>🛠 관리자 화면</h1></div></div><div class="wrap"><div class="card">' +
+    "<h2>" + (setup ? "관리자 비밀번호 만들기" : "관리자 로그인") + "</h2>" + (setup ? '<p class="muted">처음 한 번만 만들어요. 학생들에게 알려 주지 마세요.</p>' : "") +
+    '<label>관리자 비밀번호</label><input id="f_pw" type="password"><div class="err" id="f_err">' + esc(msg || "") + '</div><button class="btn dark" style="width:100%" id="f_go" onclick="doAdminLogin(this,' + setup + ')">' + (setup ? "만들기" : "들어가기") + "</button></div></div>";
+  document.getElementById("f_pw").addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("f_go").click(); });
+}
+function doAdminLogin(btn, setup) {
+  var pw = val("f_pw"); busy(btn, true);
+  (setup ? api("adminSetup", { adminPw: pw }) : Promise.resolve()).then(function () {
+    A.pw = pw; try { sessionStorage.setItem("fund_admin_pw", pw); } catch (e) {}
+    return refreshAdmin(true);
+  }).catch(function (e) { busy(btn, false); setErr(e.message); });
+}
+function refreshAdmin(force) {
+  return api("adminState", { adminPw: A.pw }).then(function (d) {
+    A.data = d;
+    if (force || d.ver !== A.ver) { A.ver = d.ver; if (force || !typing()) renderAdmin(); else A.ver = -1; }
+  }).catch(function (e) { A.data = null; A.pw = ""; renderAdminLogin(false, e.message); throw e; });
+}
+function act(action, extra, btn, confirmMsg) {
+  if (confirmMsg && !confirm(confirmMsg)) { renderAdmin(); return; }
+  busy(btn, true);
+  return api("adminAction", Object.assign({ adminPw: A.pw, action: action }, extra || {})).then(function () { return refreshAdmin(true); })
+    .catch(function (e) { busy(btn, false); toast(e.message); });
+}
+function renderAdmin() {
+  var d = A.data;
+  var pend = d.users.filter(function (u) { return u.status !== "approved"; }).length;
+  var tabs = [["vote", "🗳 투표 제어"], ["users", "👥 사용자" + (pend ? " (" + pend + ")" : "")], ["projects", "📂 프로젝트"], ["show", "🏆 결과 발표"]];
+  var h = '<div class="top"><div class="in"><h1>🛠 관리자 화면</h1><button class="btn ghost" onclick="sessionStorage.removeItem(\'fund_admin_pw\');location.reload()">나가기</button></div></div><div class="wrap" style="max-width:980px">' +
+    '<div class="tabs">' + tabs.map(function (t) { return '<button class="tab ' + (A.tab === t[0] ? "on" : "") + '" onclick="A.tab=\'' + t[0] + '\';renderAdmin()">' + t[1] + "</button>"; }).join("") + "</div>";
+  if (A.tab === "vote") h += adminVote(d);
+  if (A.tab === "users") h += adminUsers(d);
+  if (A.tab === "projects") h += adminProjects(d);
+  if (A.tab === "show") h += adminShow(d);
+  $app.innerHTML = h + "</div>";
+}
+function adminVote(d) {
+  return ["team", "personal"].map(function (c) {
+    var st = d.settings[c], k = d.stats[c].count, res = d.stats[c].results;
+    var btns = st === "ready" ? '<button class="btn green" onclick="act(\'setStatus\',{cat:\'' + c + '\',status:\'open\'},this)">▶ 투표 시작</button>' :
+      st === "open" ? '<button class="btn red" onclick="act(\'setStatus\',{cat:\'' + c + '\',status:\'closed\'},this,\'' + CAT_NAME[c] + ' 투표를 마감할까요? 마감하면 결과 발표 화면이 바로 열려요.\')">■ 투표 마감</button>' :
+        '<button class="btn" onclick="act(\'setStatus\',{cat:\'' + c + '\',status:\'open\'},this,\'투표를 다시 열까요?\')">↺ 다시 열기</button>';
+    return '<div class="card"><div class="row" style="justify-content:space-between"><h2>' + CAT_ICON[c] + " " + CAT_NAME[c] + ' <span class="pill ' + st + '">' + STATUS_NAME[st] + "</span></h2>" + btns + "</div>" +
+      '<p style="font-weight:800;font-size:18px;margin:10px 0 4px">제출 ' + k.done + " / " + k.total + "명</p>" +
+      (k.missing.length && st !== "ready" ? '<div class="muted">아직 안 낸 학생</div><div class="chips">' + k.missing.map(function (m) { return "<span>" + esc(m) + "</span>"; }).join("") + "</div>" : "") +
+      (res.length ? '<div class="tw" style="margin-top:12px"><table><tr><th>순위</th><th>프로젝트</th><th>투자금</th><th>투자자</th></tr>' + res.map(function (r) { return "<tr><td>" + r.rank + "</td><td>" + esc(r.title) + ' <span class="muted">' + esc(projSub(r)) + "</span></td><td><b>" + won(r.total) + "</b></td><td>" + r.investors + "명</td></tr>"; }).join("") + "</table></div>" : '<p class="muted">프로젝트 탭에서 프로젝트를 먼저 등록해 주세요.</p>') +
+      '<div style="margin-top:12px;text-align:right"><button class="btn sm" onclick="act(\'clearVotes\',{cat:\'' + c + '\'},this,\'' + CAT_NAME[c] + ' 투자 기록을 모두 지우고 시작 전으로 돌릴까요? 되돌릴 수 없어요.\')">투자 기록 초기화</button></div></div>';
+  }).join("");
+}
+function adminUsers(d) {
+  var us = d.users.slice().sort(function (a, b) { return (a.status === "approved") - (b.status === "approved") || a.team - b.team || String(a.sid).localeCompare(String(b.sid)); });
+  var teamSel = function (u) { return '<select style="width:auto;padding:6px 8px;font-size:14px" onchange="act(\'changeTeam\',{sid:\'' + u.sid + '\',team:this.value},null,\'' + esc(u.name) + ' 학생을 \'+this.value+\'조로 바꿀까요? 팀 프로젝트 투자는 다시 제출해야 해요.\')">' + Array.from({ length: TEAMS }, function (_, i) { return '<option value="' + (i + 1) + '"' + (u.team === i + 1 ? " selected" : "") + ">" + (i + 1) + "조</option>"; }).join("") + "</select>"; };
+  return '<div class="card"><div class="row" style="justify-content:space-between"><h2>사용자 ' + d.users.length + '명</h2><button class="btn green" onclick="act(\'approveAll\',{},this)">✔ 모두 승인</button></div>' +
+    '<p class="muted">학생이 등록하면 여기에 나타나요. 승인해야 투자할 수 있어요.</p><div class="tw"><table><tr><th>조</th><th>학번</th><th>이름</th><th>상태</th><th></th></tr>' +
+    us.map(function (u) {
+      return "<tr><td>" + teamSel(u) + "</td><td>" + esc(u.sid) + "</td><td><b>" + esc(u.name) + "</b>" + (u.mustChange ? ' <span class="muted">(비번 1234)</span>' : "") + '</td><td><span class="pill ' + u.status + '">' + (u.status === "approved" ? "승인" : "대기") + '</span></td><td class="row">' +
+        (u.status === "approved" ? '<button class="btn sm" onclick="act(\'unapprove\',{sid:\'' + u.sid + '\'},this)">승인 취소</button>' : '<button class="btn sm green" onclick="act(\'approve\',{sid:\'' + u.sid + '\'},this)">승인</button>') +
+        '<button class="btn sm" onclick="act(\'resetPw\',{sid:\'' + u.sid + '\'},this,\'' + esc(u.name) + ' 학생 비밀번호를 1234로 초기화할까요?\')">비번 초기화</button>' +
+        '<button class="btn sm red" onclick="act(\'deleteUser\',{sid:\'' + u.sid + '\'},this,\'' + esc(u.name) + ' 학생을 삭제할까요? 투자 기록도 지워져요.\')">삭제</button></td></tr>';
+    }).join("") + "</table></div></div>";
+}
+function adminProjects(d) {
+  return '<div class="card"><div class="row" style="justify-content:space-between"><div><h2>🔗 패들렛 자동 연동</h2><p class="muted" style="margin:0">패들렛 「개인프로젝트 최종」 · 「Day3_완성 프로젝트」에 올린 글이 1분마다 자동으로 들어와요.<br>한 학생이 여러 개 올리면 가장 최근 글 하나만, 마감된 쪽은 더 이상 바뀌지 않아요.</p></div><button class="btn dark" onclick="doSync(this)">지금 가져오기</button></div></div>' + ["team", "personal"].map(function (c) {
+    var ps = d.projects.filter(function (p) { return p.cat === c; });
+    var keyLabel = c === "team" ? "조" : "만든 학생 학번";
+    return '<div class="card"><h2>' + CAT_ICON[c] + " " + CAT_NAME[c] + " " + ps.length + "개</h2>" +
+      '<div class="tw"><table><tr><th>' + keyLabel + "</th><th>제목</th><th>" + (c === "team" ? "작성자" : "만든 학생") + "</th><th>링크</th><th></th></tr>" +
+      ps.map(function (p) {
+        return '<tr><td><input type="text" id="k_' + p.id + '" value="' + esc(c === "team" ? p.team : p.owner) + '" style="width:80px;padding:6px 8px;font-size:14px"></td>' +
+          '<td><input type="text" id="t_' + p.id + '" value="' + esc(p.title) + '" style="padding:6px 8px;font-size:14px"></td>' +
+          '<td><input type="text" id="w_' + p.id + '" value="' + esc(p.author) + '" style="width:110px;padding:6px 8px;font-size:14px"></td>' +
+          '<td><input type="text" id="l_' + p.id + '" value="' + esc(p.link) + '" style="padding:6px 8px;font-size:13px"></td>' +
+          '<td class="row"><button class="btn sm" onclick="saveProj(\'' + c + '\',\'' + p.id + '\',this)">저장</button><button class="btn sm red" onclick="act(\'deleteProject\',{id:\'' + p.id + '\'},this,\'이 프로젝트를 지울까요?\')">삭제</button></td></tr>';
+      }).join("") +
+      '<tr><td><input type="text" id="k_new_' + c + '" placeholder="' + (c === "team" ? "1" : "30301") + '" style="width:80px;padding:6px 8px;font-size:14px"></td><td><input type="text" id="t_new_' + c + '" placeholder="제목" style="padding:6px 8px;font-size:14px"></td><td><input type="text" id="w_new_' + c + '" style="width:110px;padding:6px 8px;font-size:14px"></td><td><input type="text" id="l_new_' + c + '" placeholder="https://" style="padding:6px 8px;font-size:13px"></td><td><button class="btn sm green" onclick="saveProj(\'' + c + '\',\'new_' + c + '\',this)">추가</button></td></tr>' +
+      "</table></div>" +
+      '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">📋 여러 개 한 번에 붙여넣기</summary><p class="muted">한 줄에 하나씩: <b>' + keyLabel + " | 제목 | " + (c === "team" ? "작성자" : "만든 학생") + ' | 링크</b></p><textarea id="bulk_' + c + '" rows="5" placeholder="' + (c === "team" ? "1 | 버스 민카이 | 1조 | https://..." : "30301 | 영석파이터 | 김현우 | https://...") + '"></textarea><button class="btn dark sm" style="margin-top:8px" onclick="bulkImport(\'' + c + '\',this)">가져오기</button></details></div>';
+  }).join("");
+}
+function doSync(btn) {
+  busy(btn, true);
+  api("adminSync", { adminPw: A.pw }).then(function (r) { toast("패들렛에서 개인 " + r.personal + "개 · 팀 " + r.team + "개를 확인했어요"); return refreshAdmin(true); })
+    .catch(function (e) { busy(btn, false); toast(e.message); });
+}
+function saveProj(cat, id, btn) {
+  var isNew = id.indexOf("new_") === 0, k = val("k_" + id);
+  act("saveProject", { cat: cat, id: isNew ? "" : id, title: val("t_" + id), author: val("w_" + id), link: val("l_" + id), team: cat === "team" ? k : "", owner: cat === "personal" ? k : "" }, btn);
+}
+function bulkImport(cat, btn) {
+  var items = val("bulk_" + cat).split("\n").map(function (l) { return l.split(/\s*[|\t]\s*/); }).filter(function (f) { return f[1]; }).map(function (f) {
+    return { team: cat === "team" ? f[0] : "", owner: cat === "personal" ? f[0] : "", title: f[1], author: f[2] || "", link: f[3] || "" };
+  });
+  if (!items.length) return toast("붙여넣은 내용이 없어요");
+  act("importProjects", { cat: cat, items: items }, btn);
+}
+function adminShow(d) {
+  var sc = d.settings.screen;
+  var b = function (key, label) { return '<button class="btn ' + (sc === key ? "primary" : "") + '" style="flex:1;min-width:160px;padding:18px" onclick="act(\'setScreen\',{screen:\'' + key + '\'},this)">' + label + (sc === key ? " ✓" : "") + "</button>"; };
+  return '<div class="card"><h2>🏆 결과 발표</h2><p class="muted">버튼을 누르면 프로젝터의 결과 발표 화면이 바로 바뀌어요. 같은 버튼을 다시 누르면 처음부터 다시 시작해요.</p>' +
+    '<div class="row" style="margin:14px 0">' + b("wait", "⏳ 대기 화면") + b("team", "👥 팀 프로젝트 결과") + b("personal", "🙋 개인 프로젝트 결과") + "</div>" +
+    '<p class="muted">발표 화면에서 <b>클릭 또는 스페이스바</b>를 누를 때마다 3위 → 2위 → 1위 → 시상대 → 전체 순위가 하나씩 공개돼요. 투표를 마감하면 그 결과 화면이 자동으로 열려요.</p></div>' +
+    '<div class="card"><h2>🔗 주소</h2><p><b>학생용</b><br><a href="' + esc(BASE) + '" target="_blank">' + esc(BASE) + '</a></p><p><b>결과 발표 화면 (프로젝터)</b><br><a href="' + esc(BASE + "?page=share") + '" target="_blank">' + esc(BASE + "?page=share") + "</a></p></div>";
+}
+
+/* =====================================================
+   결과 발표 화면
+   ===================================================== */
+var V = { data: null, seq: -1, step: 0, unlocked: false, ac: null };
+function shareStart() {
+  document.body.className = "share";
+  $app.innerHTML = '<div class="stage" id="stage"></div>';
+  var stage = document.getElementById("stage");
+  stage.addEventListener("click", advance);
+  document.addEventListener("keydown", function (e) { if (e.code === "Space" || e.key === "ArrowRight" || e.key === "Enter") { e.preventDefault(); advance(); } if (e.key === "ArrowLeft" && V.step > 0) { V.step--; renderShare(false); } });
+  renderShare(false);
+  pollShare(); setInterval(pollShare, 2500);
+}
+function pollShare() {
+  api("shareState").then(function (d) {
+    var changed = !V.data || d.screen !== V.data.screen || d.screenSeq !== V.seq;
+    var prevVer = V.data && V.data.ver;
+    V.data = d;
+    if (changed) { V.seq = d.screenSeq; V.step = 0; renderShare(false); }
+    else if (d.screen === "wait" && d.ver !== prevVer) renderShare(false);
+  }).catch(function () {});
+}
+function unlockAudio() {
+  if (V.unlocked) return; V.unlocked = true;
+  try { V.ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+}
+function advance() {
+  if (!V.unlocked) { unlockAudio(); renderShare(false); return; }
+  if (!V.data || V.data.screen === "wait") return;
+  var steps = revealSteps();
+  if (V.step < steps.length - 1) { V.step++; renderShare(true); }
+}
+function revealSteps() {
+  var res = (V.data.results || []).filter(function (r) { return r.total > 0; });
+  var steps = [{ k: "intro" }];
+  [3, 2, 1].forEach(function (rk) { var g = res.filter(function (r) { return r.rank === rk; }); if (g.length) steps.push({ k: "rank", rank: rk, items: g }); });
+  steps.push({ k: "podium" }, { k: "all" });
+  return steps;
+}
+function renderShare(animate) {
+  var st = document.getElementById("stage"), d = V.data;
+  if (!V.unlocked) { st.innerHTML = '<div class="big-emoji">🔊</div><h1>화면을 한 번 클릭해 주세요</h1><div class="sub">소리와 함께 결과를 발표해요</div>'; return; }
+  if (!d) { st.innerHTML = "<h1>불러오는 중…</h1>"; return; }
+  if (d.screen === "wait") {
+    st.innerHTML = '<h1>💰 가상 펀딩 투표</h1><div class="sub">점수 대신 투자금으로 뽑는 최고의 프로젝트</div><div class="prog">' + ["team", "personal"].map(function (c) {
+      return '<div class="box"><div style="font-size:clamp(16px,2vw,26px);font-weight:800">' + CAT_ICON[c] + " " + CAT_NAME[c] + '</div><div class="n">' + d.counts[c].done + " / " + d.counts[c].total + '</div><div style="color:#C9D0EA">' + STATUS_NAME[d.status[c]] + "</div></div>";
+    }).join("") + '</div><div class="hint">결과 발표는 관리자 화면에서 시작해요</div>';
+    return;
+  }
+  var cat = d.screen, steps = revealSteps(), s = steps[Math.min(V.step, steps.length - 1)];
+  var res = (d.results || []).filter(function (r) { return r.total > 0; });
+  var medal = { 1: "🥇", 2: "🥈", 3: "🥉" };
+  var h = "";
+  if (s.k === "intro") {
+    h = '<div class="reveal"><div class="medal">' + CAT_ICON[cat] + "</div><h1>" + CAT_NAME[cat] + ' 투자 결과</h1><div class="sub">과연 투자금을 가장 많이 받은 프로젝트는?</div></div><div class="hint">클릭하면 3위부터 공개해요</div>';
+  } else if (s.k === "rank") {
+    h = '<div class="reveal"><div class="medal">' + medal[s.rank] + '</div><div class="rk">' + s.rank + "위" + (s.items.length > 1 ? " (공동)" : "") + "</div>" + s.items.map(function (r) {
+      return '<div class="ptitle">' + esc(r.title) + '</div><div class="pmeta">' + esc(projSub(r)) + '</div><div class="pmoney">' + won(r.total) + ' <span style="font-size:.5em;color:#C9D0EA">· 투자자 ' + r.investors + "명</span></div>" +
+        (r.reasons.length ? '<div class="preasons">' + r.reasons.map(function (x) { return "<span>💬 " + esc(x) + "</span>"; }).join("") + "</div>" : "");
+    }).join("") + "</div>";
+  } else if (s.k === "podium") {
+    var col = function (rk, hgt, color) {
+      var g = res.filter(function (r) { return r.rank === rk; });
+      if (!g.length) return '<div class="pod"></div>';
+      return '<div class="pod reveal"><div class="medal" style="font-size:clamp(50px,7vw,100px)">' + medal[rk] + '</div><div class="nm">' + g.map(function (r) { return esc(r.title); }).join(" · ") + '</div><div class="mn">' + won(g[0].total) + '</div><div class="blk" style="height:' + hgt + ";background:" + color + '">' + rk + "</div></div>";
+    };
+    h = '<h1 style="font-size:clamp(28px,4.5vw,64px)">🏆 ' + CAT_NAME[cat] + ' 시상대</h1><div class="podium">' + col(2, "22vh", "#C0C7D6") + col(1, "32vh", "#F5B52E") + col(3, "15vh", "#CD7F32") + "</div>";
+  } else {
+    var all = d.results || [];
+    h = '<h1 style="font-size:clamp(26px,4vw,56px)">📋 ' + CAT_NAME[cat] + ' 전체 순위</h1><div class="ranklist">' + all.map(function (r) {
+      return '<div class="r"><b>' + (r.total > 0 ? (medal[r.rank] || r.rank + "위") : "-") + '</b><div>' + esc(r.title) + ' <span style="color:#8C97C4;font-size:.75em">' + esc(projSub(r)) + "</span></div><b>" + won(r.total) + "</b></div>";
+    }).join("") + "</div>";
+  }
+  st.innerHTML = h;
+  if (animate) {
+    if (s.k === "rank") { s.rank === 1 ? (sfxFanfare(), confetti(260)) : (sfxDing(s.rank), confetti(s.rank === 2 ? 70 : 40)); }
+    if (s.k === "podium") { sfxFanfare(); confetti(320); }
+  }
+}
+
+/* ---------- 효과음 (Web Audio) ---------- */
+function tone(freq, t0, dur, type, vol) {
+  var ac = V.ac; if (!ac) return;
+  var o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || "triangle"; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, ac.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(vol || 0.25, ac.currentTime + t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + t0 + dur);
+  o.connect(g); g.connect(ac.destination); o.start(ac.currentTime + t0); o.stop(ac.currentTime + t0 + dur + 0.05);
+}
+function sfxDing(rank) { if (V.ac && V.ac.state === "suspended") V.ac.resume(); var base = rank === 3 ? 523 : 659; tone(base, 0, 0.5, "sine", 0.3); tone(base * 1.5, 0.12, 0.7, "sine", 0.25); }
+function sfxFanfare() {
+  if (V.ac && V.ac.state === "suspended") V.ac.resume();
+  [[523, 0], [659, 0.14], [784, 0.28], [1047, 0.42]].forEach(function (n) { tone(n[0], n[1], 0.35, "square", 0.12); tone(n[0] / 2, n[1], 0.35, "triangle", 0.15); });
+  [1047, 1319, 1568].forEach(function (f) { tone(f, 0.6, 1.4, "triangle", 0.12); });
+  for (var i = 0; i < 6; i++) tone(180 + Math.random() * 80, 0.65 + i * 0.12, 0.12, "sawtooth", 0.05);
+}
+
+/* ---------- 폭죽 ---------- */
+var FX = { parts: [], running: false };
+function confetti(n) {
+  var cv = document.getElementById("fx"), W = cv.width = innerWidth, H = cv.height = innerHeight;
+  var colors = ["#F5B52E", "#FFFFFF", "#2F5BEA", "#DC2645", "#16A34A", "#FF8BD0", "#7DD3FC"];
+  for (var b = 0; b < 3; b++) {
+    var cx = W * (0.2 + 0.3 * b), cy = H * 0.35;
+    for (var i = 0; i < n / 3; i++) {
+      var a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 9;
+      FX.parts.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, s: 5 + Math.random() * 7, c: colors[(Math.random() * colors.length) | 0], r: Math.random() * 6, vr: (Math.random() - .5) * .3, life: 160 + Math.random() * 80, delay: b * 12 });
+    }
+  }
+  if (!FX.running) { FX.running = true; requestAnimationFrame(fxLoop); }
+}
+function fxLoop() {
+  var cv = document.getElementById("fx"), ctx = cv.getContext("2d");
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  FX.parts = FX.parts.filter(function (p) { return p.life > 0; });
+  FX.parts.forEach(function (p) {
+    if (p.delay > 0) { p.delay--; return; }
+    p.vy += 0.18; p.vx *= 0.985; p.vy *= 0.985; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.min(1, p.life / 40); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+  });
+  if (FX.parts.length) requestAnimationFrame(fxLoop); else { FX.running = false; ctx.clearRect(0, 0, cv.width, cv.height); }
+}
+
+/* ---------- 시작 ---------- */
+try { A.pw = sessionStorage.getItem("fund_admin_pw") || ""; } catch (e) {}
+if (PAGE === "admin") adminStart();
+else if (PAGE === "share") shareStart();
+else studentStart();
+</script>
+</body>
+</html>
