@@ -458,7 +458,7 @@ td { word-break: keep-all; }
   font-weight: 800; font-size: 18px;
   padding: 10px 18px; border-radius: 12px;
 }
-.part:nth-of-type(2) .part-badge { background: var(--point); }
+.part-2 .part-badge { background: var(--point); }
 .part-title { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.35; }
 .part-meta { color: var(--text-sub); font-size: 14px; margin-top: 4px; }
 .part .sub-title { font-size: 17px; font-weight: 800; margin: 8px 0 4px; }
@@ -471,3 +471,12 @@ td { word-break: keep-all; }
   .part-badge { font-size: 15px; padding: 8px 12px; }
   .part-title { font-size: 18px; }
 }
+
+/* 상단 바로가기: 파트(오전·오후)별 묶음 */
+.topnav .navgroup { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.topnav .navgroup + .navgroup { margin-left: 6px; padding-left: 12px; border-left: 2px solid var(--border); }
+.topnav a.toc { color: var(--main); font-weight: 800; }
+.topnav a.toc.active { color: #fff; }
+.topnav .navgroup:nth-child(2) a.toc { color: var(--point); }
+.topnav .navgroup:nth-child(2) a.toc.active { background: var(--point); color: #fff; }
+.topnav .navgroup:nth-child(2) a.active:not(.toc) { background: var(--point); }

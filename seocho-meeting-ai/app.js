@@ -10,6 +10,54 @@ const esc = (s = "") =>
 const isExternal = (url = "") => /^(https?:|mailto:|#)/i.test(url);
 
 /* ---------- 메인 페이지 렌더 ---------- */
+/* ---------- 페이지 순서: 오전 목차 → 오전 1,2,3… → 오후 목차 → 오후 1,2… ---------- */
+function 파트목록(d) {
+  return d.파트 && d.파트.length ? d.파트 : [{ 구분: "", 제목: d.강의명 }];
+}
+function 파트차시(d, p) {
+  return d.차시.filter((c) => !p.구분 || (c.파트 || 파트목록(d)[0].구분) === p.구분);
+}
+function 페이지순서(d) {
+  const seq = [];
+  파트목록(d).forEach((p) => {
+    seq.push({ 키: "목차:" + p.구분, 목차: true, 파트: p,
+      href: p.구분 ? `index.html?p=${encodeURIComponent(p.구분)}` : "index.html",
+      라벨: p.구분 ? `${p.구분} 목차` : "목차", 제목: `${p.구분} 목차 · ${p.제목}` });
+    파트차시(d, p).forEach((c, k) => {
+      seq.push({ 키: "차시:" + c.번호, 파트: p, c, 잠금: !!c.잠금,
+        href: `session.html?n=${c.번호}`, 라벨: String(k + 1),
+        제목: c.잠금 ? c.잠금제목 || "" : c.제목 });
+    });
+  });
+  return seq;
+}
+// 상단 바로가기: [오전 목차] 1 2 3 4 | [오후 목차] 1🔒
+function 네비HTML(d, 현재키) {
+  return 파트목록(d)
+    .map((p) => {
+      const items = 페이지순서(d).filter((x) => x.파트 === p);
+      return `<span class="navgroup">${items
+        .map((x) =>
+          x.잠금
+            ? `<span class="lock" title="${esc(x.제목)}">${esc(x.라벨)} 🔒</span>`
+            : `<a href="${x.href}" class="${x.목차 ? "toc " : ""}${x.키 === 현재키 ? "active" : ""}" title="${esc(x.제목)}">${esc(x.라벨)}</a>`
+        )
+        .join("")}</span>`;
+    })
+    .join("");
+}
+// 이전 / 다음 (잠긴 페이지는 건너뜁니다)
+function 이전다음HTML(d, 현재키) {
+  const seq = 페이지순서(d).filter((x) => !x.잠금 || x.키 === 현재키);
+  const i = seq.findIndex((x) => x.키 === 현재키);
+  const prev = seq[i - 1], next = seq[i + 1];
+  const 이름 = (x) => (x.목차 ? x.라벨 : `${x.파트.구분 ? x.파트.구분 + " " : ""}${x.제목}`);
+  return `<div class="pager">
+    ${prev ? `<a href="${prev.href}"><button class="btn ghost">← ${esc(이름(prev))}</button></a>` : `<span class="spacer"></span>`}
+    ${next ? `<a href="${next.href}"><button class="btn">${esc(이름(next))} →</button></a>` : `<span class="spacer"></span>`}
+  </div>`;
+}
+
 function renderIndex() {
   const d = 강의정보;
 
@@ -31,32 +79,33 @@ function renderIndex() {
     <div class="tags">${tags}</div>
     ${blog}${intro}`;
 
-  // 파트(오전·오후)별로 목차 카드와 자료를 묶어 보여 줍니다.
-  // data.js 에 파트 목록이 없으면 전체를 한 묶음으로 보여 줍니다.
-  const 파트들 = d.파트 && d.파트.length ? d.파트 : [{ 구분: "", 제목: "" }];
-  const 속함 = (x, p) => !p.구분 || (x.파트 || 파트들[0].구분) === p.구분;
+  // 목차 페이지: 주소의 ?p=오전 / ?p=오후 에 해당하는 파트만 보여 줍니다 (없으면 첫 파트).
+  const 파트들 = 파트목록(d);
+  const 요청 = new URLSearchParams(location.search).get("p");
+  const p = 파트들.find((x) => x.구분 === 요청) || 파트들[0];
+  const 차시 = 파트차시(d, p);
+  const 자료 = (d.자료 || []).filter((f) => !p.구분 || (f.파트 || 파트들[0].구분) === p.구분);
 
-  const out = 파트들.map((p) => {
-    const 차시 = d.차시.filter((c) => 속함(c, p));
-    const 자료 = (d.자료 || []).filter((f) => 속함(f, p));
-    const 카드 = 차시
-      .map((c, k) => {
-        const 이름 = c.잠금 ? c.잠금제목 || `${k + 1}차시` : c.제목;
-        const 속 = `
-          <span class="num">${k + 1}</span>
-          <h3>${esc(이름)}</h3>
-          <p>${esc(c.잠금 ? "" : c.한줄설명 || "")}</p>`;
-        return c.잠금
-          ? `<div class="card locked" aria-disabled="true">${속}
-               <span class="go">🔒 ${esc(c.잠금문구 || "준비 중")}</span>
-             </div>`
-          : `<a class="card" href="session.html?n=${c.번호}">${속}
-               <span class="go">강의안 보기 →</span>
-             </a>`;
-      })
-      .join("");
-    return `
-    <section class="part">
+  const 카드 = 차시
+    .map((c, k) => {
+      const 이름 = c.잠금 ? c.잠금제목 || `${k + 1}차시` : c.제목;
+      const 속 = `
+        <span class="num">${k + 1}</span>
+        <h3>${esc(이름)}</h3>
+        <p>${esc(c.잠금 ? "" : c.한줄설명 || "")}</p>`;
+      return c.잠금
+        ? `<div class="card locked" aria-disabled="true">${속}
+             <span class="go">🔒 ${esc(c.잠금문구 || "준비 중")}</span>
+           </div>`
+        : `<a class="card" href="session.html?n=${c.번호}">${속}
+             <span class="go">강의안 보기 →</span>
+           </a>`;
+    })
+    .join("");
+
+  const 순번 = 파트들.indexOf(p);
+  document.getElementById("파트목록").innerHTML = `
+    <section class="part part-${순번 + 1}">
       ${p.구분 ? `<div class="part-head">
         <span class="part-badge">${esc(p.구분)}</span>
         <div>
@@ -70,12 +119,12 @@ function renderIndex() {
       ${자료.length ? `<h3 class="sub-title">강의 자료</h3>
       <p class="section-sub">설문과 실습 파일을 내려받으세요.</p>
       <div class="files">${자료.map(fileCard).join("")}</div>` : ""}
-    </section>`;
-  });
+    </section>
+    ${이전다음HTML(d, "목차:" + p.구분)}`;
 
-  const 목록 = document.getElementById("파트목록");
-  목록.innerHTML = out.join("");
-  bindCopy(목록.querySelectorAll(".copy-code"));
+  document.getElementById("상단네비").innerHTML = 네비HTML(d, "목차:" + p.구분);
+  document.title = `${p.구분 ? p.구분 + " 목차 · " : ""}${p.제목} · ${d.강의명}`;
+  bindCopy(document.querySelectorAll("#파트목록 .copy-code"));
 }
 
 // 자료 카드 하나
@@ -256,8 +305,7 @@ function renderSession() {
   }
 
   if (c.잠금) {
-    document.getElementById("상단네비").innerHTML =
-      '<a class="home" href="index.html">← 목록</a>';
+    document.getElementById("상단네비").innerHTML = 네비HTML(d, "차시:" + c.번호);
     document.getElementById("세션히어로").innerHTML = `
       <div class="wrap">
         <div class="eyebrow">${n} · ${esc(d.강의명)}</div>
@@ -268,17 +316,8 @@ function renderSession() {
     return;
   }
 
-  // 상단 네비
-  const 같은파트 = d.차시.filter((x) => (x.파트 || "") === (c.파트 || ""));
-  const nav = 같은파트
-    .map((x, k) =>
-      x.잠금
-        ? `<span class="lock">${k + 1} 🔒</span>`
-        : `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}" title="${esc(x.제목)}">${k + 1}</a>`
-    )
-    .join("");
-  document.getElementById("상단네비").innerHTML =
-    `<a class="home" href="index.html">← 목록</a>` + nav;
+  // 상단 네비 (오전 목차 1 2 3 4 · 오후 목차 1 …)
+  document.getElementById("상단네비").innerHTML = 네비HTML(d, "차시:" + c.번호);
 
   // 히어로
   document.getElementById("세션히어로").innerHTML = `
@@ -305,15 +344,8 @@ function renderSession() {
     html += renderSection(s, i);
   });
 
-  // 이전/다음 (잠긴 차시로는 넘어가지 않습니다)
-  const 열림 = (x) => (x && !x.잠금 ? x : null);
-  const pi = 같은파트.indexOf(c);
-  const prev = 열림(같은파트[pi - 1]);
-  const next = 열림(같은파트[pi + 1]);
-  html += `<div class="pager">
-    ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${esc(prev.제목)}</button></a>` : `<span class="spacer"></span>`}
-    ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${esc(next.제목)} →</button></a>` : `<span class="spacer"></span>`}
-  </div>`;
+  // 이전/다음 — 마지막 오전 차시 다음은 오후 목차로 이어집니다
+  html += 이전다음HTML(d, "차시:" + c.번호);
 
   document.getElementById("세션본문").innerHTML = html;
 
