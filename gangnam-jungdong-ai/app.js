@@ -33,7 +33,7 @@ function renderIndex() {
     .map((c) => {
       const 이름 = c.잠금 ? c.잠금제목 || `${c.번호}차시` : c.제목;
       const 속 = `
-        <span class="num">${c.번호}</span>
+        <span class="num">${c.표시 || c.번호}</span>
         <h3>${esc(이름)}</h3>
         <p>${esc(c.잠금 ? "" : c.한줄설명 || "")}</p>`;
       return c.잠금
@@ -225,7 +225,7 @@ function renderSession() {
     .map((x) =>
       x.잠금
         ? `<span class="lock">${x.번호} 🔒</span>`
-        : `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}" title="${esc(x.제목)}">${x.번호}</a>`
+        : `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}" title="${esc(x.제목)}">${x.표시 || x.번호}</a>`
     )
     .join("");
   document.getElementById("상단네비").innerHTML =
