@@ -31,57 +31,77 @@ function renderIndex() {
     <div class="tags">${tags}</div>
     ${blog}${intro}`;
 
-  // 차시 카드 (data.js 에서 잠금: true 인 차시는 눌리지 않습니다)
-  document.getElementById("차시목록").innerHTML = d.차시
-    .map((c) => {
-      const 이름 = c.잠금 ? c.잠금제목 || `${c.번호}차시` : c.제목;
-      const 속 = `
-        <span class="num">${c.번호}</span>
-        <h3>${esc(이름)}</h3>
-        <p>${esc(c.잠금 ? "" : c.한줄설명 || "")}</p>`;
-      return c.잠금
-        ? `<div class="card locked" aria-disabled="true">${속}
-             <span class="go">🔒 ${esc(c.잠금문구 || "준비 중")}</span>
-           </div>`
-        : `<a class="card" href="session.html?n=${c.번호}">${속}
-             <span class="go">강의안 보기 →</span>
-           </a>`;
-    })
-    .join("");
+  // 파트(오전·오후)별로 목차 카드와 자료를 묶어 보여 줍니다.
+  // data.js 에 파트 목록이 없으면 전체를 한 묶음으로 보여 줍니다.
+  const 파트들 = d.파트 && d.파트.length ? d.파트 : [{ 구분: "", 제목: "" }];
+  const 속함 = (x, p) => !p.구분 || (x.파트 || 파트들[0].구분) === p.구분;
 
-  // 자료
-  const filesEl = document.getElementById("자료목록");
-  if (!d.자료 || d.자료.length === 0) {
-    document.getElementById("자료섹션").style.display = "none";
-  } else {
-    filesEl.innerHTML = d.자료
-      .map((f) => {
-        const 썸네일 = f.이미지 && !f.잠금
-          ? `<img src="${esc(f.이미지)}" alt="QR" class="thumb">`
-          : `<span class="ico">${f.잠금 ? "🔒" : "📄"}</span>`;
-        return `
-        <div class="file${f.잠금 ? " locked" : ""}"${f.잠금 ? ' aria-disabled="true"' : ""}>
-          ${f.잠금 || !f.이미지
-            ? 썸네일
-            : `<a href="${esc(f.이미지)}" target="_blank" rel="noopener">${썸네일}</a>`}
-          <div>
-            <div class="name">${esc(f.이름)}</div>
-            <div class="desc">${esc(f.설명 || "")}</div>
-          </div>
-          ${f.복사 && !f.잠금
-            ? `<button class="btn copy-code" data-copy="${encodeURIComponent(f.복사)}">📋 ${esc(f.버튼 || "복사")}</button>`
-            : f.잠금
-            ? `<span class="btn locked">🔒 ${esc(f.잠금문구 || "준비 중")}</span>`
-            : isExternal(f.링크)
-              ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>`
-              : /\.(png|jpe?g|gif|svg|webp)$/i.test(f.링크)
-                ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "보기")}</a>`
-                : `<a class="btn" href="${esc(f.링크)}" download>${esc(f.버튼 || "다운로드")}</a>`}
-        </div>`;
+  const out = 파트들.map((p) => {
+    const 차시 = d.차시.filter((c) => 속함(c, p));
+    const 자료 = (d.자료 || []).filter((f) => 속함(f, p));
+    const 카드 = 차시
+      .map((c, k) => {
+        const 이름 = c.잠금 ? c.잠금제목 || `${k + 1}차시` : c.제목;
+        const 속 = `
+          <span class="num">${k + 1}</span>
+          <h3>${esc(이름)}</h3>
+          <p>${esc(c.잠금 ? "" : c.한줄설명 || "")}</p>`;
+        return c.잠금
+          ? `<div class="card locked" aria-disabled="true">${속}
+               <span class="go">🔒 ${esc(c.잠금문구 || "준비 중")}</span>
+             </div>`
+          : `<a class="card" href="session.html?n=${c.번호}">${속}
+               <span class="go">강의안 보기 →</span>
+             </a>`;
       })
       .join("");
-    bindCopy(filesEl.querySelectorAll(".copy-code"));
-  }
+    return `
+    <section class="part">
+      ${p.구분 ? `<div class="part-head">
+        <span class="part-badge">${esc(p.구분)}</span>
+        <div>
+          <h2 class="part-title">${esc(p.제목)}</h2>
+          <p class="part-meta">${esc([p.시간, p.설명].filter(Boolean).join(" · "))}</p>
+        </div>
+      </div>` : ""}
+      ${카드 ? `<h3 class="sub-title">강의 목차</h3>
+      <p class="section-sub">차시를 선택하면 강의안으로 이동합니다.</p>
+      <div class="cards">${카드}</div>` : ""}
+      ${자료.length ? `<h3 class="sub-title">강의 자료</h3>
+      <p class="section-sub">설문과 실습 파일을 내려받으세요.</p>
+      <div class="files">${자료.map(fileCard).join("")}</div>` : ""}
+    </section>`;
+  });
+
+  const 목록 = document.getElementById("파트목록");
+  목록.innerHTML = out.join("");
+  bindCopy(목록.querySelectorAll(".copy-code"));
+}
+
+// 자료 카드 하나
+function fileCard(f) {
+  const 썸네일 = f.이미지 && !f.잠금
+    ? `<img src="${esc(f.이미지)}" alt="QR" class="thumb">`
+    : `<span class="ico">${f.잠금 ? "🔒" : "📄"}</span>`;
+  return `
+  <div class="file${f.잠금 ? " locked" : ""}"${f.잠금 ? ' aria-disabled="true"' : ""}>
+    ${f.잠금 || !f.이미지
+      ? 썸네일
+      : `<a href="${esc(f.이미지)}" target="_blank" rel="noopener">${썸네일}</a>`}
+    <div>
+      <div class="name">${esc(f.이름)}</div>
+      <div class="desc">${esc(f.설명 || "")}</div>
+    </div>
+    ${f.복사 && !f.잠금
+      ? `<button class="btn copy-code" data-copy="${encodeURIComponent(f.복사)}">📋 ${esc(f.버튼 || "복사")}</button>`
+      : f.잠금
+      ? `<span class="btn locked">🔒 ${esc(f.잠금문구 || "준비 중")}</span>`
+      : isExternal(f.링크)
+        ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "다운로드")}</a>`
+        : /\.(png|jpe?g|gif|svg|webp)$/i.test(f.링크)
+          ? `<a class="btn" href="${esc(f.링크)}" target="_blank" rel="noopener">${esc(f.버튼 || "보기")}</a>`
+          : `<a class="btn" href="${esc(f.링크)}" download>${esc(f.버튼 || "다운로드")}</a>`}
+  </div>`;
 }
 
 // 복사 버튼 공통 동작 (자료의 '복사' 항목)
@@ -224,6 +244,7 @@ function renderSession() {
   const n = parseInt(new URLSearchParams(location.search).get("n"), 10) || 1;
   const idx = d.차시.findIndex((c) => c.번호 === n);
   const c = d.차시[idx];
+  const p = c && d.파트 ? d.파트.find((x) => x.구분 === c.파트) : null;
 
   const 표시제목 = c ? (c.잠금 ? c.잠금제목 || "" : c.제목) : "";
   document.title = `${표시제목} · ${d.강의명}`;
@@ -248,11 +269,12 @@ function renderSession() {
   }
 
   // 상단 네비
-  const nav = d.차시
-    .map((x) =>
+  const 같은파트 = d.차시.filter((x) => (x.파트 || "") === (c.파트 || ""));
+  const nav = 같은파트
+    .map((x, k) =>
       x.잠금
-        ? `<span class="lock">${x.번호} 🔒</span>`
-        : `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}" title="${esc(x.제목)}">${x.번호}</a>`
+        ? `<span class="lock">${k + 1} 🔒</span>`
+        : `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}" title="${esc(x.제목)}">${k + 1}</a>`
     )
     .join("");
   document.getElementById("상단네비").innerHTML =
@@ -261,9 +283,9 @@ function renderSession() {
   // 히어로
   document.getElementById("세션히어로").innerHTML = `
     <div class="wrap">
-      <div class="eyebrow">${esc(d.강의명)}</div>
+      <div class="eyebrow">${esc(p ? `${p.구분} · ${p.제목}` : d.강의명)}</div>
       <h1>${esc(c.제목)}</h1>
-      <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(d.강의일자)}</div>
+      <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(p && p.시간 ? `${d.강의일자} ${p.시간}` : d.강의일자)}</div>
     </div>`;
 
   let html = "";
@@ -285,8 +307,9 @@ function renderSession() {
 
   // 이전/다음 (잠긴 차시로는 넘어가지 않습니다)
   const 열림 = (x) => (x && !x.잠금 ? x : null);
-  const prev = 열림(d.차시[idx - 1]);
-  const next = 열림(d.차시[idx + 1]);
+  const pi = 같은파트.indexOf(c);
+  const prev = 열림(같은파트[pi - 1]);
+  const next = 열림(같은파트[pi + 1]);
   html += `<div class="pager">
     ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${esc(prev.제목)}</button></a>` : `<span class="spacer"></span>`}
     ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${esc(next.제목)} →</button></a>` : `<span class="spacer"></span>`}

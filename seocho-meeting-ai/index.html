@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI로 준비하는 회의와 후속 업무 관리 · 서초구청 직원교육</title>
+  <title>서초구청 생성형 AI 활용 교육 · 2026.11.13</title>
   <!-- style.css 도 항상 최신으로 불러옵니다 (캐시 방지) -->
   <script>
     document.write('<link rel="stylesheet" href="style.css?v=' + Date.now() + '" />');
@@ -36,24 +36,13 @@
       <div class="box" id="강사"></div>
     </div>
 
-    <!-- 차시 목록 -->
-    <section class="section">
-      <h2 class="section-title">강의 목차</h2>
-      <p class="section-sub">차시를 선택하면 강의안으로 이동합니다.</p>
-      <div class="cards" id="차시목록"></div>
-    </section>
-
-    <!-- 자료 다운로드 -->
-    <section class="section" id="자료섹션">
-      <h2 class="section-title">강의 자료</h2>
-      <p class="section-sub">설문과 실습 파일을 내려받으세요.</p>
-      <div class="files" id="자료목록"></div>
-    </section>
+    <!-- 오전 · 오후 파트별 목차와 자료 (data.js 의 파트 목록으로 자동 생성) -->
+    <div id="파트목록"></div>
 
   </main>
 
   <footer>
-    <div class="wrap">© 2026 전혜영 · 한국강사교육협회 · AI로 준비하는 회의와 후속 업무 관리</div>
+    <div class="wrap">© 2026 전혜영 · 한국강사교육협회 · 서초구청 생성형 AI 활용 교육</div>
   </footer>
 
   <script>
