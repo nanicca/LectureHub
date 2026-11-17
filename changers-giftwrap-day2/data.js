@@ -19,6 +19,7 @@ const 강의정보 = {
 
   자료: [
     { 이름: "결과 공유 패들렛", 링크: "https://padlet.com/nanicca00/1118-s025k3ca7ryyuyj0y472", 설명: "만든 결과물을 올려 주세요", 버튼: "참여하기", 이미지: "padlet-qr.png" },
+    { 이름: "강의 교안 (PDF)", 링크: "lecture-slides.pdf", 설명: "선물포장협회 2일차 완성교안", 버튼: "다운로드", 다운로드: "선물포장협회_2일차_완성교안.pdf" },
     { 이름: "ChatGPT", 링크: "https://chatgpt.com", 설명: "chatgpt.com", 버튼: "바로가기" },
     { 이름: "Gemini", 링크: "https://gemini.google.com", 설명: "gemini.google.com", 버튼: "바로가기" },
     { 이름: "Flow", 링크: "https://flow.google", 설명: "flow.google", 버튼: "바로가기" },
