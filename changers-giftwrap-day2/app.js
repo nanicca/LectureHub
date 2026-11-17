@@ -133,6 +133,10 @@ function renderSession() {
         .join("")}</tbody></table>`;
     } else if (s.type === "실습") {
       if (s.설명) html += `<p>${esc(s.설명)}</p>`;
+      // 프롬프트가 여러 개면 가로로 배치 (가로: false 면 세로, 숫자면 칸 수 지정)
+      const n = s.프롬프트.length;
+      const cols = s.가로 === false ? 1 : (typeof s.가로 === "number" ? s.가로 : Math.min(n, 3));
+      html += `<div class="prompts cols-${cols}">`;
       s.프롬프트.forEach((p) => {
         html += `<div class="prompt">
           <span class="label">${esc(p.라벨 || "프롬프트")}</span>
@@ -140,6 +144,7 @@ function renderSession() {
           <button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">📋 복사</button>
         </div>`;
       });
+      html += `</div>`;
       if (s.원본 && s.원본.주소) {
         html += `<div class="source">
           <a class="source-btn" href="${esc(s.원본.주소)}" target="_blank" rel="noopener">▶ ${esc(s.원본.라벨 || "원본 보기")} ↗</a>

@@ -326,3 +326,15 @@ th { color: var(--main); }
 }
 .source-btn:hover { background: var(--main-dark); }
 .source-note { color: var(--text-sub); font-size: 13px; }
+
+/* 실습 프롬프트 — 가로 배치 */
+.prompts { display: grid; gap: 14px; margin-top: 12px; }
+.prompts.cols-1 { grid-template-columns: 1fr; }
+.prompts.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.prompts.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.prompts.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.prompts .prompt { margin-top: 0; display: flex; flex-direction: column; }
+.prompts .prompt pre { flex: 1; }
+.prompts .prompt .copy-btn { align-self: flex-start; }
+@media (max-width: 900px) { .prompts.cols-3, .prompts.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .prompts.cols-2, .prompts.cols-3, .prompts.cols-4 { grid-template-columns: 1fr; } }
