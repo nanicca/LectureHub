@@ -50,7 +50,7 @@ function renderIndex() {
         <span class="num">${esc(label(c))}</span>
         <h3>${esc(c.제목)}</h3>
         <p>${esc(c.한줄설명 || "")}</p>
-        <span class="go">프롬프트 보기 →</span>
+        <span class="go">열기 →</span>
       </a>`
     )
     .join("");
@@ -132,8 +132,15 @@ function renderSession() {
   if (quick) html += `<div class="quicknav">${quick}</div>`;
 
   // 섹션들
-  (c.섹션 || []).forEach((s, i) => {
-    html += `<section class="block" id="sec-${i}"><h2>${esc(s.제목)}</h2>`;
+  // 표·체크리스트가 잇달아 나오면 넓은 화면에서 두 개씩 나란히 (홀수면 마지막은 한 줄 전체)
+  const isInfo = (s) => s && (s.type === "표" || s.type === "체크리스트");
+  const secs = c.섹션 || [];
+  const half = secs.map(() => false);
+  for (let i = 0; i < secs.length - 1; i++) {
+    if (isInfo(secs[i]) && isInfo(secs[i + 1])) { half[i] = half[i + 1] = true; i++; }
+  }
+  secs.forEach((s, i) => {
+    html += `<section class="block${half[i] ? " half" : ""}" id="sec-${i}"><h2>${esc(s.제목)}</h2>`;
 
     if (s.type === "문단") {
       html += `<p>${esc(s.내용)}</p>`;

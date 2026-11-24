@@ -346,3 +346,13 @@ th { color: var(--main); }
 .rounds a small { font-weight: 400; font-size: 14px; white-space: nowrap; }
 .rounds a.active { background: var(--point); border-color: var(--point); color: #fff; }
 .rounds ~ .instructor { margin-top: 20px; }
+
+/* 표 읽기 쉽게 · 나란히 배치 */
+th, td { font-size: 16px; vertical-align: top; word-break: keep-all; overflow-wrap: anywhere; }
+td:first-child { font-weight: 700; min-width: 92px; }
+.checklist li { font-size: 16px; word-break: keep-all; }
+@media (min-width: 900px) {
+  #세션본문 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+  #세션본문 > * { grid-column: 1 / -1; min-width: 0; }
+  #세션본문 > .half { grid-column: auto; }
+}
