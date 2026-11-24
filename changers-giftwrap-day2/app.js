@@ -15,10 +15,17 @@ const mark = (s) => esc(s).replace(/\[([^\]\n]*)\]/g,'<span class="fill">[$1]</s
 function renderIndex() {
   const d = 강의정보;
 
+  // 회차 탭 (?r=2 처럼 주소로도 열림, 없으면 마지막 회차)
+  const rq = parseInt(new URLSearchParams(location.search).get("r"), 10);
+  const r = d.회차목록.find((x) => x.회차 === rq) || d.회차목록[d.회차목록.length - 1];
+  document.getElementById("회차탭").innerHTML = d.회차목록
+    .map((x) => `<a href="index.html?r=${x.회차}" class="${x === r ? "active" : ""}"${x === r ? ' aria-current="page"' : ""}>${x.회차}회차 <small>${esc(x.강의일자)}</small></a>`)
+    .join("");
+
   // 헤더
-  setText("강의명", d.강의명);
-  setText("부제", d.부제);
-  setText("강의일자", d.강의일자);
+  setText("강의명", r.강의명);
+  setText("부제", r.부제);
+  setText("강의일자", r.강의일자);
   setText("소개", d.소개);
 
   // 강사 소개
@@ -36,23 +43,25 @@ function renderIndex() {
 
   // 차시 카드
   document.getElementById("차시목록").innerHTML = d.차시
+    .filter((c) => c.회차 === r.회차)
     .map(
       (c) => `
       <a class="card" href="session.html?n=${c.번호}">
         <span class="num">${esc(label(c))}</span>
         <h3>${esc(c.제목)}</h3>
         <p>${esc(c.한줄설명 || "")}</p>
-        <span class="go">강의안 보기 →</span>
+        <span class="go">프롬프트 보기 →</span>
       </a>`
     )
     .join("");
 
   // 자료
   const filesEl = document.getElementById("자료목록");
-  if (!d.자료 || d.자료.length === 0) {
+  const files = (d.자료 || []).filter((f) => f.회차 === r.회차);
+  if (files.length === 0) {
     document.getElementById("자료섹션").style.display = "none";
   } else {
-    filesEl.innerHTML = d.자료
+    filesEl.innerHTML = files
       .map(
         (f) => `
         <div class="file">
@@ -74,8 +83,11 @@ function renderIndex() {
 function renderSession() {
   const d = 강의정보;
   const n = parseInt(new URLSearchParams(location.search).get("n"), 10) || 1;
-  const idx = d.차시.findIndex((c) => c.번호 === n);
-  const c = d.차시[idx];
+  const c = d.차시.find((x) => x.번호 === n);
+  // 같은 회차 안에서만 이동
+  const r = c && d.회차목록.find((x) => x.회차 === c.회차);
+  const list = d.차시.filter((x) => c && x.회차 === c.회차);
+  const idx = list.indexOf(c);
 
   document.title = `${c ? label(c) + " · " + c.제목 : "강의안"}`;
 
@@ -86,21 +98,21 @@ function renderSession() {
   }
 
   // 상단 네비 (전체 차시)
-  const nav = d.차시
+  const nav = list
     .map(
       (x) =>
         `<a href="session.html?n=${x.번호}" class="${x.번호 === n ? "active" : ""}">${esc(label(x))}</a>`
     )
     .join("");
   document.getElementById("상단네비").innerHTML =
-    `<a class="home" href="index.html">← 목록</a>` + nav;
+    `<a class="home" href="index.html?r=${c.회차}">← ${c.회차}회차 목록</a>` + nav;
 
   // 히어로
   document.getElementById("세션히어로").innerHTML = `
     <div class="wrap">
-      <div class="eyebrow">${esc(label(c))} · ${esc(d.강의명)}</div>
+      <div class="eyebrow">${c.회차}회차 ${esc(label(c))} · ${esc(r.강의명)}</div>
       <h1>${esc(c.제목)}</h1>
-      <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(d.강의일자)}</div>
+      <div class="meta">강사 ${esc(d.강사.이름)} · ${esc(r.강의일자)}</div>
     </div>`;
 
   // 본문
@@ -161,8 +173,8 @@ function renderSession() {
   });
 
   // 이전/다음
-  const prev = d.차시[idx - 1];
-  const next = d.차시[idx + 1];
+  const prev = list[idx - 1];
+  const next = list[idx + 1];
   html += `<div class="pager">
     ${prev ? `<a href="session.html?n=${prev.번호}"><button class="btn ghost">← ${esc(label(prev))}</button></a>` : `<span class="spacer"></span>`}
     ${next ? `<a href="session.html?n=${next.번호}"><button class="btn">${esc(label(next))} →</button></a>` : `<span class="spacer"></span>`}

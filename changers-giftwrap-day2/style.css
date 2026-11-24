@@ -338,3 +338,11 @@ th { color: var(--main); }
 .prompts .prompt .copy-btn { align-self: flex-start; }
 @media (max-width: 900px) { .prompts.cols-3, .prompts.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .prompts.cols-2, .prompts.cols-3, .prompts.cols-4 { grid-template-columns: 1fr; } }
+
+/* 회차 탭 */
+.rounds { position: relative; z-index: 2; display: flex; gap: 10px; margin: 24px 0 0; }
+.rounds a { flex: 1; padding: 14px 10px; text-align: center; font-weight: 700; font-size: 18px; text-decoration: none;
+  color: inherit; background: #fff; border: 2px solid var(--border); border-radius: 12px; }
+.rounds a small { font-weight: 400; font-size: 14px; white-space: nowrap; }
+.rounds a.active { background: var(--point); border-color: var(--point); color: #fff; }
+.rounds ~ .instructor { margin-top: 20px; }
