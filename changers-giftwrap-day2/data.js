@@ -29,8 +29,7 @@ const 강의정보 = {
     { 회차: 3, 이름: "Claude 앱 내려받기", 링크: "https://claude.ai/download", 설명: "준비 1 · Windows용 다운로드", 버튼: "바로가기" },
     { 회차: 3, 이름: "GitHub 가입", 링크: "https://github.com", 설명: "준비 3 · Sign up", 버튼: "바로가기" },
     { 회차: 3, 이름: "Git 설치", 링크: "https://git-scm.com/downloads/win", 설명: "준비 6 · Windows용", 버튼: "바로가기" },
-    { 회차: 3, 이름: "Bitly", 링크: "https://bitly.com", 설명: "긴 주소를 짧게", 버튼: "바로가기" },
-    { 회차: 3, 이름: "프로필 사이트 예시", 링크: "https://nanicca.github.io/", 설명: "nanicca.github.io", 버튼: "바로가기" }
+    { 회차: 3, 이름: "Bitly", 링크: "https://bitly.com", 설명: "긴 주소를 짧게", 버튼: "바로가기" }
   ],
 
   차시: [
