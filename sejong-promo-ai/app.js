@@ -17,16 +17,19 @@ function renderIndex() {
     <p class="who">${esc(d.강사.소속)} <b>${esc(d.강사.이름)}</b>${d.강사.소개링크 ? ` <a href="${esc(d.강사.소개링크)}" ${ext}>강사 소개 ↗</a>` : ""}</p>
   </div></header>
   <div class="wrap">
-    <section class="block"><h2>오전 강의</h2><div class="grid c3">${d.차시.map((c) => `
+    ${["오전", "오후"].map((t) => `<section class="block"><h2>${t} 강의</h2><div class="grid c3">${d.차시.filter((c) => c.시간 === t).map((c) => `
       <a class="box card" href="session.html?n=${c.번호}">
-        <span class="pill">${esc(c.표시)}</span><h3>${esc(c.제목)}</h3><p>${esc(c.한줄설명)}</p><span class="go">열기 →</span></a>`).join("")}</div></section>
-    ${d.오후.length ? `<section class="block"><h2>오후 강의</h2><div class="grid c5">${d.오후.map((o) => `
-      <div class="box soft"><b class="no">${esc(o.번호)}</b><span>${esc(o.제목)}</span></div>`).join("")}</div></section>` : ""}
+        <span class="pill">${esc(c.표시)}</span><h3>${esc(c.제목)}</h3><p>${esc(c.한줄설명)}</p><span class="go">열기 →</span></a>`).join("")}</div></section>`).join("")}
     <section class="block"><h2>바로가기</h2><div class="grid c3">${d.자료.map((f) => `
       <a class="box file" href="${esc(f.링크)}" ${f.다운로드 ? `download="${esc(f.다운로드)}"` : ext}><span class="txt"><b>${esc(f.이름)}</b><span>${esc(f.설명)}</span></span><span class="arrow">${f.다운로드 ? "↓" : "↗"}</span></a>`).join("")}</div></section>
     ${d.설문 ? 설문박스(d.설문) : ""}
   </div>`;
 }
+
+// 이미지 또는 영상(mp4) 한 칸. 비율이 있으면 그 비율로, 반복이면 계속 재생
+const 매체 = (k) => `<figure>${/\.mp4$/.test(k.파일)
+  ? `<video src="${esc(k.파일)}" poster="${esc(k.표지)}" ${k.비율 ? `style="aspect-ratio:${esc(k.비율)}"` : ""} ${k.반복 ? "autoplay loop muted" : 'controls preload="none"'} playsinline></video>`
+  : `<a href="${esc(k.파일)}" ${ext}><img src="${esc(k.파일)}" alt="${esc(k.설명)}" loading="lazy"></a>`}<figcaption>${esc(k.설명)}</figcaption></figure>`;
 
 const 그리기 = {
   카드: (s) => `<div class="grid c${s.칸 || 4}">${s.항목.map((k, i) => `
@@ -36,8 +39,8 @@ const 그리기 = {
     ${s.아래 ? `<div class="under">${그리기.카드({ 항목: s.아래, 칸: 2, 번호: false })}</div>` : ""}`,
   표: (s) => `<div class="tablewrap"><table><thead><tr>${s.헤더.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${s.행.map((r) => `<tr>${r.map((c) => `<td>${br(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`,
   체크리스트: (s) => `<ul class="checks grid c${s.칸 || 1}">${s.항목.map((t) => `<li><label class="box"><input type="checkbox"><span>${br(t)}</span></label></li>`).join("")}</ul>`,
-  이미지: (s) => `<div class="grid c${s.항목.length}">${s.항목.map((k) => `<figure><a href="${esc(k.파일)}" ${ext}><img src="${esc(k.파일)}" alt="${esc(k.설명)}"></a><figcaption>${esc(k.설명)} · 누르면 크게 보기</figcaption></figure>`).join("")}</div>`,
-  영상: (s) => `<div class="grid c${s.칸 || s.항목.length}">${s.항목.map((k) => `<figure><video src="${esc(k.파일)}" poster="${esc(k.표지)}" controls preload="none" playsinline></video><figcaption>${esc(k.설명)}</figcaption></figure>`).join("")}</div>`,
+  이미지: (s) => `<div class="grid c${s.칸 || s.항목.length}">${s.항목.map(매체).join("")}</div>`,
+  영상: (s) => 그리기.이미지(s),
   실습: (s) => `${s.설명 ? `<p class="lead">${br(s.설명)}</p>` : ""}${s.세로영상 ? `<div class="withvideo">` : ""}<div class="grid c${s.칸 || Math.min(s.프롬프트.length, 3)}">${s.프롬프트.map((p) => `
     <div class="prompt"><div class="phead"><span class="pill">${esc(p.라벨)}</span><button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">복사</button></div>
     <div class="ptext"><pre>${mark(p.내용)}</pre></div></div>`).join("")}</div>${s.세로영상 ? `${그리기.영상({ 항목: [s.세로영상] })}</div>` : ""}`,
@@ -58,6 +61,7 @@ function renderSession() {
       ${s.덧붙임 ? `<div class="box band">${br(s.덧붙임)}</div>` : ""}
       ${s.링크 ? `<a class="btn" href="${esc(s.링크.주소)}" ${ext}>${esc(s.링크.라벨)} ↗</a>` : ""}
       ${s.출처 ? `<p class="src">${br(s.출처)}</p>` : ""}</section>`).join("")}
+    ${c.설문 ? 설문박스(d.설문) : ""}
     <div class="pager">${prev ? `<a class="btn ghost" href="session.html?n=${prev.번호}">← ${esc(prev.표시)}</a>` : "<span></span>"}${next ? `<a class="btn" href="session.html?n=${next.번호}">${esc(next.표시)} →</a>` : `<a class="btn" href="index.html">처음으로</a>`}</div>
   </div>`;
 
