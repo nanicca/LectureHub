@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>선물포장 기초 과정</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='85' font-size='85'>🎁</text></svg>">
+  <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+  <header class="hero" id="머리"></header>
+  <main class="wrap" id="본문"></main>
+  <script>
+    // 고친 내용이 바로 보이도록 항상 최신 파일을 불러옵니다.
+    (function () {
+      var v = Date.now();
+      function load(src, cb) {
+        var s = document.createElement("script");
+        s.src = src + "?v=" + v; s.onload = cb;
+        document.head.appendChild(s);
+      }
+      load("data.js", function () { load("app.js", function () { renderIndex(); }); });
+    })();
+  </script>
+</body>
+</html>
