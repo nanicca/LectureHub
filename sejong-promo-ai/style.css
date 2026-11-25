@@ -80,6 +80,7 @@ button:hover, .btn:hover { background:#963a02; } button.done { background:#1f7a4
 figure { display:flex; flex-direction:column; gap:10px; justify-content:center; }
 figure img, figure video { display:block; width:100%; border-radius:14px; border:1px solid var(--line); background:#fff; }
 figure video { aspect-ratio:16/9; background:#0d1424; }
+.withvideo { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:24px; } .withvideo video { aspect-ratio:9/16; }
 figcaption { font-size:18px; color:var(--sub); text-align:center; }
 footer { border-top:1px solid var(--line); padding:28px; text-align:center; color:var(--sub); font-size:18px; }
 
@@ -87,6 +88,7 @@ footer { border-top:1px solid var(--line); padding:28px; text-align:center; colo
 @media (max-width:700px) {
   body, pre { font-size:19px; } .wrap { padding:0 16px; } .hero { padding:44px 0; } .block h2 { font-size:26px; }
   .grid, .flow, .flow.f3 { grid-template-columns:minmax(0,1fr); }
+  .withvideo { grid-template-columns:minmax(0,1fr); }
   .prompt { padding:14px; } .ptext { padding:16px; } th, td { padding:14px; } td:first-child { min-width:92px; }
   .survey { flex-direction:column; } .survey .txt { align-items:center; text-align:center; }
 }

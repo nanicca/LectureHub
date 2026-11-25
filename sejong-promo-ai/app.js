@@ -37,10 +37,10 @@ const 그리기 = {
   표: (s) => `<div class="tablewrap"><table><thead><tr>${s.헤더.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${s.행.map((r) => `<tr>${r.map((c) => `<td>${br(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`,
   체크리스트: (s) => `<ul class="checks grid c${s.칸 || 1}">${s.항목.map((t) => `<li><label class="box"><input type="checkbox"><span>${br(t)}</span></label></li>`).join("")}</ul>`,
   이미지: (s) => `<div class="grid c${s.항목.length}">${s.항목.map((k) => `<figure><a href="${esc(k.파일)}" ${ext}><img src="${esc(k.파일)}" alt="${esc(k.설명)}"></a><figcaption>${esc(k.설명)} · 누르면 크게 보기</figcaption></figure>`).join("")}</div>`,
-  영상: (s) => `<div class="grid c${s.항목.length}">${s.항목.map((k) => `<figure><video src="${esc(k.파일)}" poster="${esc(k.표지)}" controls preload="none" playsinline></video><figcaption>${esc(k.설명)}</figcaption></figure>`).join("")}</div>`,
-  실습: (s) => `${s.설명 ? `<p class="lead">${br(s.설명)}</p>` : ""}<div class="grid c${s.칸 || Math.min(s.프롬프트.length, 3)}">${s.프롬프트.map((p) => `
+  영상: (s) => `<div class="grid c${s.칸 || s.항목.length}">${s.항목.map((k) => `<figure><video src="${esc(k.파일)}" poster="${esc(k.표지)}" controls preload="none" playsinline></video><figcaption>${esc(k.설명)}</figcaption></figure>`).join("")}</div>`,
+  실습: (s) => `${s.설명 ? `<p class="lead">${br(s.설명)}</p>` : ""}${s.세로영상 ? `<div class="withvideo">` : ""}<div class="grid c${s.칸 || Math.min(s.프롬프트.length, 3)}">${s.프롬프트.map((p) => `
     <div class="prompt"><div class="phead"><span class="pill">${esc(p.라벨)}</span><button class="copy-btn" data-copy="${encodeURIComponent(p.내용)}">복사</button></div>
-    <div class="ptext"><pre>${mark(p.내용)}</pre></div></div>`).join("")}</div>`,
+    <div class="ptext"><pre>${mark(p.내용)}</pre></div></div>`).join("")}</div>${s.세로영상 ? `${그리기.영상({ 항목: [s.세로영상] })}</div>` : ""}`,
 };
 
 function renderSession() {
