@@ -17,7 +17,7 @@ function renderIndex() {
     <p class="who">${esc(d.강사.소속)} <b>${esc(d.강사.이름)}</b>${d.강사.소개링크 ? ` <a href="${esc(d.강사.소개링크)}" ${ext}>강사 소개 ↗</a>` : ""}</p>
   </div></header>
   <div class="wrap">
-    ${["오전", "오후"].map((t) => `<section class="block"><h2>${t} 강의</h2><div class="grid c3">${d.차시.filter((c) => c.시간 === t).map((c) => `
+    ${["오전", "오후"].map((t) => `<section class="block"><h2>${t} 강의</h2><div class="grid c${t === "오전" ? 4 : 3}">${d.차시.filter((c) => c.시간 === t).map((c) => `
       <a class="box card" href="session.html?n=${c.번호}">
         <span class="pill">${esc(c.표시)}</span><h3>${esc(c.제목)}</h3><p>${esc(c.한줄설명)}</p><span class="go">열기 →</span></a>`).join("")}</div></section>`).join("")}
     <section class="block"><h2>바로가기</h2><div class="grid c3">${d.자료.map((f) => `
