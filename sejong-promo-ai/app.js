@@ -23,7 +23,7 @@ function renderIndex() {
     ${d.오후.length ? `<section class="block"><h2>오후 강의</h2><div class="grid c5">${d.오후.map((o) => `
       <div class="box soft"><b class="no">${esc(o.번호)}</b><span>${esc(o.제목)}</span></div>`).join("")}</div></section>` : ""}
     <section class="block"><h2>바로가기</h2><div class="grid c3">${d.자료.map((f) => `
-      <a class="box file" href="${esc(f.링크)}" ${ext}><span class="txt"><b>${esc(f.이름)}</b><span>${esc(f.설명)}</span></span><span class="arrow">↗</span></a>`).join("")}</div></section>
+      <a class="box file" href="${esc(f.링크)}" ${f.다운로드 ? `download="${esc(f.다운로드)}"` : ext}><span class="txt"><b>${esc(f.이름)}</b><span>${esc(f.설명)}</span></span><span class="arrow">${f.다운로드 ? "↓" : "↗"}</span></a>`).join("")}</div></section>
     ${d.설문 ? 설문박스(d.설문) : ""}
   </div>`;
 }
