@@ -302,8 +302,7 @@ const 강의정보 = {
           제목: "인기 쇼츠 스토리 살펴보기",
           설명: "어떤 장면에서 계속 보고 싶어졌나요? 인기 쇼츠의 이야기 구조를 찾아보세요",
           링크: [
-            { 라벨: "퇴근하면 밥먹고 후딱 자라", 주소: "https://www.youtube.com/watch?v=M3IigzX5ob8" },
-            { 라벨: "[ASMR] 파도+화산+빙하+우주 자르기", 주소: "https://www.youtube.com/watch?v=z_kFSrzrJtY" }
+            { 라벨: "퇴근하면 밥먹고 후딱 자라", 주소: "https://www.youtube.com/watch?v=M3IigzX5ob8" }
           ]
         },
         {
