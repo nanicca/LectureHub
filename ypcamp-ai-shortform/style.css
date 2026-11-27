@@ -3,20 +3,22 @@
  * ========================================================================= */
 
 :root {
-  /* 크리에이티브 컬러: 딥퍼플 + 핑크 + 연보라 배경 */
-  --main: #2b1c4f;        /* 메인 색상 (딥퍼플) */
-  --main-dark: #1c1236;
-  --point: #d6336c;       /* 포인트 색상 (핑크) */
-  --point-light: #f783ac;
-  --peach: #fde4ee;
-  --bg: #f7f5fb;          /* 연보라 배경 */
+  /* 남색 + 네온 포인트 */
+  --main: #0b1638;        /* 메인 색상 (남색) */
+  --main-dark: #060d26;
+  --point: #0089b0;       /* 흰 배경 위 글자용 포인트 (진한 시안) */
+  --point-light: #3ff0ff; /* 남색 위 네온 시안 */
+  --neon: #3ff0ff;        /* 네온 시안 */
+  --neon-pink: #ff3fb4;   /* 네온 핑크 */
+  --peach: #e4f8fd;
+  --bg: #f2f4fa;          /* 밝은 회청색 배경 */
   --card: #ffffff;
   --text: #1f2b45;
   --text-sub: #6e6a64;
   --border: #e6e0d6;
   --radius: 14px;
   --shadow: 0 6px 24px rgba(31, 43, 69, 0.06);
-  --shadow-hover: 0 12px 32px rgba(214, 51, 108, 0.16);
+  --shadow-hover: 0 12px 32px rgba(0, 137, 176, 0.18);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -356,3 +358,40 @@ td:first-child { font-weight: 700; min-width: 92px; }
   #세션본문 > * { grid-column: 1 / -1; min-width: 0; }
   #세션본문 > .half { grid-column: auto; }
 }
+
+/* =========================================================================
+ *  남색 + 네온 테마 덮어쓰기
+ * ========================================================================= */
+.hero, .s-hero {
+  background: radial-gradient(circle at 85% 15%, rgba(255, 63, 180, 0.22), transparent 45%),
+              radial-gradient(circle at 10% 90%, rgba(63, 240, 255, 0.18), transparent 50%),
+              var(--main);
+}
+.hero h1, .s-hero h1 { text-shadow: 0 0 18px rgba(63, 240, 255, 0.45); }
+.hero .date { background: var(--neon); color: var(--main); box-shadow: 0 0 14px rgba(63, 240, 255, 0.7); }
+.hero .subtitle, .s-hero .eyebrow { color: var(--neon); }
+.card .num { background: var(--main); color: var(--neon); box-shadow: 0 0 0 1px var(--neon) inset; }
+.card:hover { box-shadow: 0 0 0 2px var(--neon), 0 12px 28px rgba(11, 22, 56, 0.18); }
+.btn { background: var(--main); color: var(--neon); border: 1px solid var(--neon); }
+.btn:hover { background: var(--main-dark); box-shadow: 0 0 12px rgba(63, 240, 255, 0.6); }
+.btn.ghost { color: var(--main); border-color: var(--main); background: transparent; }
+.btn.ghost:hover { box-shadow: none; }
+.topnav a.active { background: var(--main); color: var(--neon); }
+.quicknav a:hover { background: var(--main); color: var(--neon); }
+.prompt { border: 2px solid var(--main); box-shadow: 0 0 0 1px rgba(63, 240, 255, 0.35); }
+.prompt .label { background: var(--main); color: var(--neon); }
+.prompt pre { background: #f6f8fc; }
+.prompt pre .fill { color: #c4007f; background: #ffe6f5; }
+.copy-btn {
+  background: var(--neon); color: var(--main);
+  box-shadow: 0 2px 0 #0089b0, 0 0 12px rgba(63, 240, 255, 0.55);
+}
+.copy-btn:hover { background: #7af6ff; }
+.copy-btn:active { box-shadow: 0 0 0 #0089b0, 0 0 8px rgba(63, 240, 255, 0.5); }
+.source-btn { background: var(--main); color: var(--neon); border: 1px solid var(--neon); }
+.source-btn:hover { box-shadow: 0 0 12px rgba(63, 240, 255, 0.6); }
+.rounds a.active { background: var(--main); border-color: var(--neon); color: var(--neon); }
+th { background: #e8edf7; }
+.goals { border-left-color: var(--neon-pink); }
+.checklist li::before { color: var(--neon-pink); }
+.prompt .copy-btn.done { color: #fff; }
